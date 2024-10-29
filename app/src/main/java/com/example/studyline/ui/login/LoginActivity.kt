@@ -18,6 +18,7 @@ import com.example.studyline.ui.register.RegisterActivity
 import com.example.studyline.databinding.ActivityLoginBinding
 
 import com.example.studyline.R
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
@@ -107,6 +108,9 @@ class LoginActivity : AppCompatActivity() {
 
         }
     }
+
+
+
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)

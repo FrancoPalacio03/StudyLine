@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "601079991247",
+    "project_id": "studyline-35663",
+    "storage_bucket": "studyline-35663.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601079991247:android:758859e16e0c855148e0ba",
+        "android_client_info": {
+          "package_name": "com.example.studyline"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtwEnyGWiVnrFOVP7RmrtO54djnGZzLwk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
