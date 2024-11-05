@@ -2,6 +2,7 @@ package com.example.studyline
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.google.android.material.snackbar.Snackbar
@@ -14,10 +15,12 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.studyline.data.model.University
 import com.example.studyline.databinding.ActivityMainBinding
 import com.example.studyline.ui.login.LoginActivity
 import com.example.studyline.ui.login.LoginViewModel
 import com.example.studyline.ui.login.LoginViewModelFactory
+import com.example.studyline.data.repository.UniversityRepository
 
 enum class ProviderType{
     BASIC
@@ -28,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var loginViewModel: LoginViewModel
+    private lateinit var repository: UniversityRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +59,22 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Inicializa UniversityRepository antes de usarlo
+        repository = UniversityRepository()
+
+        val uniTest = University(
+            universityId = "2",
+            name = "UBA",
+            logo = "logo2.png",
+            location = "CABA"
+        )
+
+        repository.addUniversity(uniTest).addOnSuccessListener {
+            Log.d("MainActivity", "University added successfully")
+        }.addOnFailureListener { e ->
+            Log.e("MainActivity", "Failed to add university", e)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
