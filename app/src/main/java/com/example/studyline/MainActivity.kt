@@ -99,7 +99,8 @@ class MainActivity : AppCompatActivity() {
                 Log.i("uploadFileTest", "Success to upload file ${url}")*/
             //commandPostRepo.createNewPost(newPost, null)
             //commandPostRepo.createNewComment("p1", newCommnet)
-            commandPostRepo.deletePostById("p1")
+            //commandPostRepo.updatePublicationByField("p1", "description", "upgradeando publicacion")
+            //commandPostRepo.deletePostById("p1")
         }
     }
 
