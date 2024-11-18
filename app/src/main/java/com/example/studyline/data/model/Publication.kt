@@ -12,6 +12,7 @@ data class Publication(
     val topic: String,
     val description: String? = null,
     val date: Timestamp = Timestamp.now(),
+    val files: List<String> = emptyList(),
     val likes : Int = 0,
     val dislikes : Int = 0,
 )

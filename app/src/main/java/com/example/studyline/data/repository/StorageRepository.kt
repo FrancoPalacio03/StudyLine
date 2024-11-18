@@ -1,61 +1,81 @@
 package com.example.studyline.data.repository
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ListResult
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
-import kotlin.coroutines.resume
-
-// averiguar como hacer asincronico los metodos
 
 class StorageRepository {
-    val fileServer = FirebaseStorage.getInstance().reference
-    
-    fun uploadFile (publicationId : String, file : Uri){
-        val storageRef= fileServer.child("publications/${publicationId}/files/${file.lastPathSegment}")
-        storageRef.putFile(file)
-    }
+    private val fileServer = FirebaseStorage.getInstance("gs://studyline-35663.firebasestorage.app").reference
 
-    suspend fun uploadFiles (publicationId : String, files : List<Uri>){
-        files.forEach { file ->
-            val fileRef = fileServer.child("publications/${publicationId}/files/${file.lastPathSegment}")
-            fileRef.putFile(file)
+    suspend fun uploadPublicationFile(publicationId: String, file: Uri) : String? {
+        return try {
+            val storageRef = fileServer.child("publications/${publicationId}/files/${file.lastPathSegment}")
+            storageRef.putFile(file).await()
+            storageRef.downloadUrl.await().toString()
+        } catch (e: Exception) {
+            Log.e("uploadPublicationFile", "Failed to upload one file", e)
+            null
         }
     }
 
-    // suspend son funciones de corrutina para escribir codigo asincronico
-    suspend fun getFilesForPublication(publicationId: String) : List<String> {
-        val fileUrls = mutableListOf<String>()
-        val files : ListResult = fileServer.child("publications/${publicationId}/files/").listAll().await()
-        for (file in files.items){
-            val url = file.downloadUrl.await().toString()
-            fileUrls.add(url)
+    suspend fun uploadFileTest(publicationId: String, fileName: String, fileBytes: ByteArray) : String? {
+        return try {
+            val storageRef = fileServer.child("publications/${publicationId}/files/${fileName}")
+            storageRef.putBytes(fileBytes).await()
+            val downloadUrl = storageRef.downloadUrl.await().toString()
+            return downloadUrl
+        } catch (e: Exception) {
+            Log.e("uploadPublicationFile", "Failed to upload one file", e)
+            null
         }
-        return fileUrls
+    }
+
+    suspend fun uploadPublicationFiles(publicationId: String, files: List<Uri>) : List<String?> {
+        // Itera sobre la lista de archivos, los sube, obtiene el URL de descargar y lo mapea en una nueva lista que se retorna
+        return files.map { file ->
+            try {
+                val fileRef = fileServer.child("publications/${publicationId}/files/${file.lastPathSegment}")
+                fileRef.putFile(file).await()
+                fileRef.downloadUrl.await().toString()
+            } catch (e: Exception) {
+                Log.e("uploadPublicationFiles", "Failed to upload files", e)
+                null
+            }
+        }
     }
 
     //se borra asi pq no hay forma en Firebasa Storage de eliminar carpetas
-    suspend fun deletePublicationFiles (publicationId : String) : Boolean{
+    suspend fun deletePublicationFiles(publicationId: String) {
         val publicationFiles = fileServer.child("publications/${publicationId}/files/")
-        return try {
+        try {
             val result = publicationFiles.listAll().await()
             result.items.forEach { fileRef ->
                 fileRef.delete().await()
             }
-            true
         } catch (e: Exception) {
-            e.printStackTrace()
-            false
+            Log.e("deletePublicationFiles", "Failed to deletes files", e)
         }
     }
 
-    suspend fun deleteOneFile (publicationId : String, fileName : String) {
-        suspendCancellableCoroutine { continuation ->
-            val publicationFile = fileServer.child("publications/${publicationId}/files/${fileName}")
-            publicationFile.delete()
-                .addOnSuccessListener { continuation.resume(true) }
-                .addOnFailureListener { continuation.resume(false) }
+    suspend fun uploadPhotoGeneric (reference : String, id : String, file : Uri) : String?{
+        return try {
+            val storageRef= fileServer.child("${reference}/${id}/file/${file.lastPathSegment}")
+            storageRef.putFile(file).await()
+            storageRef.downloadUrl.await().toString()
+        } catch (e: Exception) {
+            Log.e("uploadPhotoGeneric", "Failed to upload the photo in ${reference}", e)
+            null
         }
     }
+
+    suspend fun deletePhotoGeneric (reference : String, id : String, downloadUrl : String) {
+        try {
+            val fileResult = fileServer.child("${reference}/${id}/file/${Uri.parse(downloadUrl).lastPathSegment}")
+            fileResult.delete().await()
+        } catch (e: Exception) {
+            Log.e("deletePhotoGeneric", "Failed to delete the photo in ${reference}", e)
+        }
+    }
+
 }

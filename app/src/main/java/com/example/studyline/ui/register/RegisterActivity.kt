@@ -6,11 +6,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.studyline.MainActivity
 import com.example.studyline.ProviderType
 import com.example.studyline.R
+import com.example.studyline.data.model.User
+import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
@@ -33,15 +37,31 @@ class RegisterActivity : AppCompatActivity() {
         title = "Register"
 
         binding.registerButton.setOnClickListener {
+            val name = binding.editTextName.text.toString()
+            val surname = binding.editTextSurname.text.toString()
+            val university = binding.editTextUniversity.text.toString()
+            val birthday = binding.editTextDateOfBirth.text.toString()
             val email = binding.editTextEmail.text.toString()
             val password = binding.editTextPassword.text.toString()
             val confirmPassword = binding.editTextConfirmPassword.text.toString()
+
+            val userData = User (
+                userId = "user1",
+                name = "$name $surname",
+                email = email,
+                birthday = birthday,
+                universityId = "Uni1"
+            )
+            val userRepo = UserRepository()
 
             if (email.isNotEmpty() && password == confirmPassword) {
                 FirebaseAuth.getInstance()
                     .createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            lifecycleScope.launch {
+                                userRepo.registerUser(userData, null)
+                            }
                             showHome(email, ProviderType.BASIC)
                         } else {
                             showAlert("Error al registrar")

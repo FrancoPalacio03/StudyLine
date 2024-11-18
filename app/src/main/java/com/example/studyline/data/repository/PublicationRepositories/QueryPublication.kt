@@ -11,23 +11,33 @@ import kotlinx.coroutines.tasks.await
 class QueryPublication {
     private val db = FirebaseFirestore.getInstance().collection("publications")
 
-    suspend fun getPublicationByIdParse (publicationId : String) : Publication? {
+    suspend fun getPublicationById (publicationId : String) : Publication? {
         return try {
-            val documentSnapshot = db.document(publicationId).get().await()
+            val documentSnapshot: DocumentSnapshot = db.document(publicationId).get().await()
             documentSnapshot.toObject(Publication::class.java)
-        } catch (e: Exception) { null }
-        // Manda el objeto ya mapeado, pero al usarlo hay que implementar Corrutinas al ser asincronico
-        // import kotlinx.coroutines.*
+        } catch (e: Exception) {
+            Log.e("getPublicationById", "Failed to get info for Post ${publicationId}", e)
+            null
+        }
     }
 
-    fun getPublicationById (publicationId : String) : Task<DocumentSnapshot> {
-        return db.document(publicationId).get()
-        // Manda el objeto de tipo Task, y se debe mapear el objeto donde se llame para usarlo
-        // documentSnapshot.toObject(Publication::class.java)
+    suspend fun getPublicationsByUser (userId : String) : List<Publication>?{
+        return try {
+            val querySnapshot: QuerySnapshot = db.whereEqualTo("userId", userId).get().await()
+            querySnapshot.documents.mapNotNull { it.toObject(Publication::class.java) }
+        } catch (e: Exception) {
+            Log.e("getPublicationsByUser", "Failed to get publication for User ${userId}", e)
+            null
+        }
     }
 
-    fun getPublicationsByUser (userId : String) : Task<QuerySnapshot>{
-        return db.whereEqualTo("userId", userId).get()
-        // querySnapshot.documents.mapNotNull { it.toObject(Publication::class.java) }
+    suspend fun getPublicationsBySubject (subjectId : String) : List<Publication>?{
+        return try {
+            val querySnapshot: QuerySnapshot = db.whereEqualTo("subjectId", subjectId).get().await()
+            querySnapshot.documents.mapNotNull { it.toObject(Publication::class.java) }
+        } catch (e: Exception) {
+            Log.e("getPublicationsBySubject", "Failed to get posts for Subject ${subjectId}", e)
+            null
+        }
     }
 }
