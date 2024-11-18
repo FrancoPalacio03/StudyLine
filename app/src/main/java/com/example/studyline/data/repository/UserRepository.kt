@@ -70,6 +70,7 @@ class UserRepository {
             val user: DocumentSnapshot = db.document(userId).get().await()
             user.toObject(User::class.java)
         } catch (e: Exception) {
+            Log.e("getUserById", "Failed to get the user ${userId}", e)
             null
         }
     }

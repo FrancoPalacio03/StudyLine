@@ -17,18 +17,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.studyline.data.model.Publication
-import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
-import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
-import com.example.studyline.data.repository.StorageRepository
 import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityMainBinding
 import com.example.studyline.ui.login.LoginActivity
 import com.example.studyline.ui.login.LoginViewModel
 import com.example.studyline.ui.login.LoginViewModelFactory
-import com.google.firebase.Timestamp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 enum class ProviderType{
@@ -40,10 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var loginViewModel: LoginViewModel
-    private var userRepo = UserRepository()
-    private var queryPostRepo =  QueryPublication()
-    private var commandPostRepo = CommandPublication()
-    private var storageRepo = StorageRepository()
+    private val userRepo = UserRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,35 +62,11 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val newPost = Publication(
-            publicationId = "p1",
-            userId = "user1",
-            subjectId = "s1",
-            topic = "publication",
-            description = "publicacion 1 2 3",
-        )
-
-        val newCommnet = Publication(
-            publicationId = "c2",
-            userId = "user1",
-            subjectId = "s1",
-            fatherPublicationId = "p1",
-            topic = "comment",
-            description = "comentario 1 2 3",
-        )
-
-        /*val inputStream = assets.open("deyverson.jpg")
-        val fileBytes = inputStream.readBytes()
-        inputStream.close()*/
-
         lifecycleScope.launch {
-            /*val url = storageRepo.uploadFileTest("p1", "deyverson", fileBytes)
-            if(url != null)
-                Log.i("uploadFileTest", "Success to upload file ${url}")*/
-            //commandPostRepo.createNewPost(newPost, null)
-            //commandPostRepo.createNewComment("p1", newCommnet)
-            //commandPostRepo.updatePublicationByField("p1", "description", "upgradeando publicacion")
-            //commandPostRepo.deletePostById("p1")
+            val user = userRepo.getUserById("dYDu2EJyeBSt6d8NZxtk5BQPDai1")
+            if (user != null) {
+                Log.i("getUserById", "Success to get de User : ${user.name}")
+            }
         }
     }
 

@@ -2,6 +2,10 @@ package com.example.studyline.ui.register
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.studyline.MainActivity
 import com.example.studyline.ProviderType
 import com.example.studyline.R
+import com.example.studyline.data.model.UniversityMap
 import com.example.studyline.data.model.User
 import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityRegisterBinding
@@ -18,6 +23,13 @@ import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+    private var universities = listOf(
+        UniversityMap("UN0", "Soy Autodidacta"),
+        UniversityMap("UN1", "Universidad Tecnológica Nacional"),
+        UniversityMap("UN2", "Universidad de Buenos Aires"),
+        UniversityMap("UN3", "Universidad Nacional Arturo Jauretche"),
+    )
+    private var selectedUniversity: UniversityMap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,21 +48,45 @@ class RegisterActivity : AppCompatActivity() {
     private fun setup() {
         title = "Register"
 
+        // Paso 2: Crear el adaptador mostrando solo los nombres
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            universities.map { it.name } // Mostrar solo los nombres
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        // Paso 3: Asignar el adaptador al Spinner
+        binding.universitySelect.adapter = adapter
+
+        binding.universitySelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedUniversity = universities[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                selectedUniversity = null
+            }
+        }
+
         binding.registerButton.setOnClickListener {
             val name = binding.editTextName.text.toString()
             val surname = binding.editTextSurname.text.toString()
-            val university = binding.editTextUniversity.text.toString()
             val birthday = binding.editTextDateOfBirth.text.toString()
             val email = binding.editTextEmail.text.toString()
             val password = binding.editTextPassword.text.toString()
             val confirmPassword = binding.editTextConfirmPassword.text.toString()
+
+            if (selectedUniversity == null) {
+                Toast.makeText(this, "Por favor selecciona una universidad", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val userData = User (
                 userId = "user1",
                 name = "$name $surname",
                 email = email,
                 birthday = birthday,
-                universityId = "Uni1"
+                universityId = selectedUniversity!!.id
             )
             val userRepo = UserRepository()
 
@@ -62,7 +98,7 @@ class RegisterActivity : AppCompatActivity() {
                             lifecycleScope.launch {
                                 userRepo.registerUser(userData, null)
                             }
-                            showHome(email, ProviderType.BASIC)
+                            showHome("$name $surname", ProviderType.BASIC)
                         } else {
                             showAlert("Error al registrar")
                         }
@@ -82,9 +118,9 @@ class RegisterActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun showHome(email: String, provider: ProviderType) {
+    private fun showHome(user: String, provider: ProviderType) {
         val homeIntent = Intent(this, MainActivity::class.java).apply {
-            putExtra("email", email)
+            putExtra("user", user)
             putExtra("provider", provider.name)
         }
         startActivity(homeIntent)

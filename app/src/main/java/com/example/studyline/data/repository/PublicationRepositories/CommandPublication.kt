@@ -20,7 +20,6 @@ class CommandPublication {
             if(files != null){
                 val downloadURLs = fileServer.uploadPublicationFiles(post.publicationId, files)
                 downloadURLs.let { urls ->
-                    // arrayUnion(*urls.toTypedArray()) actualiza la lista en una sola llamada de Update
                     db.document(post.publicationId).update("files", FieldValue.arrayUnion(*urls.toTypedArray()))
                 }
             }

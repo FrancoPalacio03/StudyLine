@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot // Representa un conjunto de documentos que resultan de una consulta.
 import com.google.firebase.firestore.QuerySnapshot // Representa un conjunto de documentos que resultan de una consulta.
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class QueryPublication {
@@ -37,6 +38,20 @@ class QueryPublication {
             querySnapshot.documents.mapNotNull { it.toObject(Publication::class.java) }
         } catch (e: Exception) {
             Log.e("getPublicationsBySubject", "Failed to get posts for Subject ${subjectId}", e)
+            null
+        }
+    }
+
+    suspend fun getRecentPublications () : List<Publication>?{
+        return try {
+            val querySnapshot: QuerySnapshot = db.orderBy("date", Query.Direction.DESCENDING) // Ordenar por fecha descendente
+                .limit(10) // Limitar a 10 resultados
+                .get()
+                .await() // Esperar los datos
+            Log.i("getPublicationsBySubject", "Success to get recent publications")
+            querySnapshot.documents.mapNotNull { it.toObject(Publication::class.java) }
+        } catch (e: Exception) {
+            Log.e("getPublicationsBySubject", "Failed to get recent publications", e)
             null
         }
     }

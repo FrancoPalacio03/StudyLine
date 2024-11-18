@@ -75,31 +75,13 @@
                     android:paddingBottom="20sp"
                     android:hint="Fecha de nacimiento" />
 
-                <EditText
-                    android:id="@+id/editTextUniversity"
+                <Spinner
+                    android:id="@+id/universitySelect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20sp"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:paddingBottom="20sp"
-                    android:hint="Universidad" />
-
-                <RadioButton
-                    android:id="@+id/radioButtonSelfTaught"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Soy Autodidacta" />
-
-                <EditText
-                    android:id="@+id/editTextOrientation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:paddingBottom="20sp"
-                    android:hint="Orientación" />
+                    android:spinnerMode="dropdown"
+                    />
 
                 <EditText
                     android:id="@+id/editTextPassword"
