@@ -17,11 +17,15 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
 import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityMainBinding
 import com.example.studyline.ui.login.LoginActivity
 import com.example.studyline.ui.login.LoginViewModel
 import com.example.studyline.ui.login.LoginViewModelFactory
+import com.example.studyline.ui.publications.PublicationAdapter
 import kotlinx.coroutines.launch
 
 enum class ProviderType{
@@ -33,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var loginViewModel: LoginViewModel
-    private val userRepo = UserRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +47,6 @@ class MainActivity : AppCompatActivity() {
             .get(LoginViewModel::class.java)
         setSupportActionBar(binding.appBarMain.toolbar)
 
-        binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
-        }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -61,13 +59,6 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        lifecycleScope.launch {
-            val user = userRepo.getUserById("dYDu2EJyeBSt6d8NZxtk5BQPDai1")
-            if (user != null) {
-                Log.i("getUserById", "Success to get de User : ${user.name}")
-            }
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -80,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
 
                 true
+
             }
 
             else -> super.onOptionsItemSelected(item)

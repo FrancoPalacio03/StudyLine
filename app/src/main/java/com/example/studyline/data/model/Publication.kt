@@ -9,7 +9,7 @@ data class Publication(
     val subjectId: String = "",
     val commentsId: List<String> = emptyList(), // Colleccion de todos los comentarios asociado a la publicacion
     val fatherPublicationId: String? = null, // Id de la publcacion padre (no es null en caso que sea un comenctario)
-    val topic: String = "",
+    val title: String = "",
     val description: String? = null,
     val date: Timestamp = Timestamp.now(),
     val files: List<String> = emptyList(),
