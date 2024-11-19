@@ -3,7 +3,7 @@ package com.example.studyline.data.model
 import com.google.firebase.Timestamp
 
 
-data class Publication(
+data class  Publication(
     val publicationId: String = "",
     val userId: String = "",
     val subjectId: String = "",

@@ -8,8 +8,8 @@
     <string name="action_settings">Ajustes</string>
     <string name="action_logout">Cerrar Sesion</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
+    <string name="menu_home">Feed</string>
+    <string name="menu_gallery">Mis publicaciones</string>
     <string name="menu_slideshow">Slideshow</string>
     <!-- Strings related to login -->
     <string name="title_activity_login">LoginActivity</string>
@@ -22,4 +22,6 @@
     <string name="invalid_password">Ingresa mas de 5 caracteres</string>
     <string name="login_failed">"Login failed"</string>
     <string name="action_register">Registrarse</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -22,4 +22,14 @@
         android:name="com.example.studyline.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/createPostFragment"
+        android:name="com.example.studyline.ui.home.CreatePostFragment"
+        android:label="Crear Publicación"
+        tools:layout="@layout/fragment_create_post" />
+    <action
+        android:id="@+id/action_global_createPostFragment"
+        app:destination="@id/createPostFragment" />
+
 </navigation>

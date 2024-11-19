@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.studyline.R
 import com.example.studyline.databinding.FragmentHomeBinding
+import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
 
@@ -32,6 +35,10 @@ class HomeFragment : Fragment() {
         homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
+
+
+
         return root
     }
 
@@ -39,4 +46,18 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    private fun updateHeaderTexts(userNameTextView: TextView, userMailTextView: TextView) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null) {
+            userNameTextView.text = user.displayName ?: "Usuario"
+            userMailTextView.text = user.email ?: "Sin correo disponible"
+        } else {
+            userNameTextView.text = "Invitado"
+            userMailTextView.text = "Por favor inicia sesión"
+        }
+    }
+
+
+
 }
