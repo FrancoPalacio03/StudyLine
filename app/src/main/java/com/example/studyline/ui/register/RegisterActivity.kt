@@ -81,13 +81,7 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val userData = User (
-                userId = "user1",
-                name = "$name $surname",
-                email = email,
-                birthday = birthday,
-                universityId = selectedUniversity!!.id
-            )
+
             val userRepo = UserRepository()
 
             if (email.isNotEmpty() && password == confirmPassword) {
@@ -95,17 +89,32 @@ class RegisterActivity : AppCompatActivity() {
                     .createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            lifecycleScope.launch {
-                                userRepo.registerUser(userData, null)
+                            val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+                            // Si el UID es válido, crea el objeto User
+                            if (userId != null) {
+                                val userData = User(
+                                    userId = userId,
+                                    name = "$name $surname",
+                                    email = email,
+                                    birthday = birthday,
+                                    universityId = selectedUniversity!!.id
+                                )
+                                lifecycleScope.launch {
+                                    userRepo.registerUser(userData, null)
+                                }
+                                showHome("$name $surname", ProviderType.BASIC)
+                            } else {
+                                showAlert("Error al registrar")
                             }
-                            showHome("$name $surname", ProviderType.BASIC)
                         } else {
-                            showAlert("Error al registrar")
+                            showAlert("Error al crear usuario: ${task.exception?.message}")
                         }
                     }
             } else {
                 showAlert("Las contraseñas no coinciden")
             }
+
         }
     }
 

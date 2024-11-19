@@ -2,7 +2,6 @@ package com.example.studyline.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.studyline.data.LoginDataSource
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

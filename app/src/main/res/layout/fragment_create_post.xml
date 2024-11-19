@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ui.home.CreatePostFragment">
+
+    <!-- Título de la publicación -->
+    <TextView
+        android:id="@+id/post_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crear Publicación"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="8dp" />
+
+    <!-- Cuadro de texto para el título -->
+    <EditText
+        android:id="@+id/title_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Escribe el título aquí..."
+        android:inputType="text"
+        android:background="@android:color/transparent"
+        android:padding="16dp"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/post_title" />
+
+    <!-- Selector de universidad -->
+    <Spinner
+        android:id="@+id/universitySelect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_input" />
+
+    <!-- Cuadro de texto para la publicación -->
+    <EditText
+        android:id="@+id/post_text"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:hint="Escribe tu publicación..."
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        android:background="@android:color/transparent"
+        android:alpha="0.8"
+        android:padding="16dp"
+        android:minHeight="200dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/universitySelect"
+        app:layout_constraintBottom_toTopOf="@id/upload_section"
+        android:layout_margin="8dp" />
+
+    <!-- Sección para subir archivos -->
+    <LinearLayout
+        android:id="@+id/upload_section"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:elevation="4dp"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/post_text">
+
+        <!-- Botón para seleccionar archivos -->
+        <Button
+            android:id="@+id/upload_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subir archivo"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Texto que indica los archivos seleccionados -->
+        <TextView
+            android:id="@+id/selected_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:maxWidth="200dp"
+            android:layout_gravity="center"
+            android:text="No se ha seleccionado ningún archivo" />
+    </LinearLayout>
+
+    <!-- Botón de publicación -->
+    <Button
+        android:id="@+id/post_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Publicar"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upload_section"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="16dp"
+        android:layout_margin="8dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

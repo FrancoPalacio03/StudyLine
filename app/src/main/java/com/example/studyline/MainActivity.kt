@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -20,12 +22,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
+import com.example.studyline.data.model.User
 import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityMainBinding
 import com.example.studyline.ui.login.LoginActivity
 import com.example.studyline.ui.login.LoginViewModel
 import com.example.studyline.ui.login.LoginViewModelFactory
 import com.example.studyline.ui.publications.PublicationAdapter
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 enum class ProviderType{
@@ -37,15 +41,27 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var loginViewModel: LoginViewModel
+    private val userRepo = UserRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
         setSupportActionBar(binding.appBarMain.toolbar)
+
+        binding.appBarMain.fab.setOnClickListener { view ->
+            val navController = findNavController(R.id.nav_host_fragment_content_main)
+            navController.navigate(R.id.action_global_createPostFragment)
+        }
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -59,6 +75,12 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val userId= FirebaseAuth.getInstance().currentUser?.uid
+        lifecycleScope.launch {
+            val user = userRepo.getUserById(userId.toString())
+            setupNavigationHeader(user)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -90,4 +112,35 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    private fun setupNavigationHeader(user: User?) {
+        // Accede al NavigationView dentro de la Activity
+        val navigationView: NavigationView = binding.navView
+        val headerView = navigationView.getHeaderView(0)
+
+        // Encuentra los TextViews en el encabezado usando el layout 'nav_header_main.xml'
+        val mainUserName: TextView = headerView.findViewById(R.id.mainUserName)
+        val mainMail: TextView = headerView.findViewById(R.id.mainMail)
+
+
+        // Actualiza los TextViews con la información del usuario
+        if (user != null) {
+            mainUserName.text = user.name ?: "Usuario"
+            mainMail.text = user.email ?: "Sin correo disponible"
+        } else {
+            mainUserName.text = "Invitado"
+            mainMail.text = "Por favor inicia sesión"
+        }
+    }
+
+    fun hideToolbarAndFab() {
+        binding.appBarMain.toolbar.visibility = View.GONE
+        binding.appBarMain.fab.visibility = View.GONE
+    }
+
+    fun showToolbarAndFab() {
+        binding.appBarMain.toolbar.visibility = View.VISIBLE
+        binding.appBarMain.fab.visibility = View.VISIBLE
+    }
+
 }

@@ -14,6 +14,9 @@ import com.example.studyline.data.repository.PublicationRepositories.QueryPublic
 import com.example.studyline.databinding.FragmentHomeBinding
 import com.example.studyline.ui.publications.PublicationAdapter
 import kotlinx.coroutines.launch
+import com.example.studyline.R
+import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
 
@@ -33,6 +36,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+
         val recyclerView = binding.rvPublications
         adapter = PublicationAdapter(emptyList())
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -40,6 +44,7 @@ class HomeFragment : Fragment() {
 
         // Cargar publicaciones
         loadPublications()
+
         return root
     }
 
@@ -47,6 +52,7 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 
     private fun loadPublications () {
         lifecycleScope.launch {
@@ -63,4 +69,16 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    private fun updateHeaderTexts(userNameTextView: TextView, userMailTextView: TextView) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null) {
+            userNameTextView.text = user.displayName ?: "Usuario"
+            userMailTextView.text = user.email ?: "Sin correo disponible"
+        } else {
+            userNameTextView.text = "Invitado"
+            userMailTextView.text = "Por favor inicia sesión"
+        }
+    }
+
 }
