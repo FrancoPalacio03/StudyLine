@@ -36,30 +36,30 @@
 
     <!-- Selector de universidad -->
     <Spinner
-        android:id="@+id/universitySelect"
+        android:id="@+id/testSelect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:spinnerMode="dropdown"
         android:layout_margin="8dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:minHeight="48dp"
+        android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_input" />
 
     <!-- Cuadro de texto para la publicación -->
     <EditText
         android:id="@+id/post_text"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
         android:hint="Escribe tu publicación..."
         android:inputType="textMultiLine"
         android:gravity="top|start"
         android:background="@android:color/transparent"
         android:alpha="0.8"
         android:padding="16dp"
-        android:minHeight="200dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/universitySelect"
+        app:layout_constraintTop_toBottomOf="@id/testSelect"
         app:layout_constraintBottom_toTopOf="@id/upload_section"
         android:layout_margin="8dp" />
 

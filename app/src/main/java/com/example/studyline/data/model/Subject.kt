@@ -6,3 +6,5 @@ data class Subject(
     val description: String = "",
     val universityId: String = "",
 )
+
+data class SubjectMap(val id: String, val name: String)

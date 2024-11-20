@@ -21,8 +21,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.studyline.data.model.Subject
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
 import com.example.studyline.data.model.User
+import com.example.studyline.data.repository.SubjectRepository
 import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityMainBinding
 import com.example.studyline.ui.login.LoginActivity
@@ -42,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var loginViewModel: LoginViewModel
     private val userRepo = UserRepository()
+    private val subjectRepo = SubjectRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +84,8 @@ class MainActivity : AppCompatActivity() {
             val user = userRepo.getUserById(userId.toString())
             setupNavigationHeader(user)
         }
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

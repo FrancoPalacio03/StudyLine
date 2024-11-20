@@ -1,6 +1,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -22,7 +23,7 @@
 
             <TextView
                 android:id="@+id/postTitle"
-                android:layout_width="0dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
@@ -39,83 +40,63 @@
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 
-        <!-- Usuario -->
-        <Button
-            android:id="@+id/btnUser"
+        <TextView
+            android:id="@+id/postSubject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackground"
             android:fontFamily="sans-serif"
             android:paddingVertical="4dp"
-            android:text="Usuario"
+            android:text="Materia"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <!-- Descripción -->
+
         <TextView
             android:id="@+id/postDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="78dp"
             android:paddingVertical="8dp"
             android:text="Descripción" />
-
-        <!-- Archivos (Placeholder para imágenes o enlaces) -->
-        <LinearLayout
-            android:id="@+id/allFiles"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Archivos"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </LinearLayout>
 
         <!-- Interacciones: Comentarios, Likes, y Dislikes -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="right"
             android:orientation="horizontal"
             android:paddingTop="8dp">
 
-            <!-- Botón de Comentarios -->
-            <ImageView
-                android:id="@+id/btnComments"
+            <TextView
+                android:id="@+id/postCountLike"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:contentDescription="Comentarios"
-                android:src="@drawable/icon_comment" />
+                android:text="Num"
+                android:gravity="center"/>
 
             <!-- Likes -->
             <ImageView
                 android:id="@+id/btnLike"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="16dp"
                 android:contentDescription="Like"
                 android:src="@drawable/icon_like" />
+
+            <TextView
+                android:id="@+id/postCountDislike"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:text="Num"
+                android:gravity="center"/>
 
             <!-- Dislikes -->
             <ImageView
                 android:id="@+id/btnDislike"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="16dp"
                 android:contentDescription="Dislike"
                 android:src="@drawable/icon_dislike" />
-
-            <!-- Nuevo Comentario -->
-            <ImageView
-                android:id="@+id/btnNewComment"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="16dp"
-                android:contentDescription="Nuevo Comentario"
-                android:src="@drawable/icon_newcomment" />
         </LinearLayout>
 
     </LinearLayout>

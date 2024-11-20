@@ -8,17 +8,25 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studyline.R
 import com.example.studyline.data.model.Publication
+import com.google.firebase.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class PublicationAdapter(private var publications: List<Publication>) :
+class PublicationAdapter(private var publications: List<Publication>,) :
     RecyclerView.Adapter<PublicationAdapter.PublicationViewHolder>() {
 
     // ViewHolder: Representa una tarjeta individual en la lista
     inner class PublicationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(publication: Publication) {
             itemView.findViewById<TextView>(R.id.postTitle).text = publication.title
-            itemView.findViewById<TextView>(R.id.postDate).text = publication.date.toString()
+            val date: Timestamp = publication.date
+            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val dateParse = formatter.format(date.toDate())
+            itemView.findViewById<TextView>(R.id.postDate).text = dateParse
             itemView.findViewById<TextView>(R.id.postDescription).text = publication.description
-            itemView.findViewById<Button>(R.id.btnUser).text = publication.userId
+            itemView.findViewById<TextView>(R.id.postSubject).text = publication.subjectId
+            itemView.findViewById<TextView>(R.id.postCountLike).text = publication.likes.toString()
+            itemView.findViewById<TextView>(R.id.postCountDislike).text = publication.dislikes.toString()
         }
     }
 

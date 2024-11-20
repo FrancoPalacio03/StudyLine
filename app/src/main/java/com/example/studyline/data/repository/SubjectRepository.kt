@@ -16,9 +16,10 @@ class SubjectRepository {
     suspend fun createSubject (subject : Subject) {
         try {
             db.document(subject.subjectId).set(subject).await()
+            Log.i("createSubject", "Success to create the subject ${subject.name}")
         }
         catch (e : Exception){
-            Log.e("createNewPost", "Failed to create post or upload files", e)
+            Log.e("createSubject", "Failed to create the subject ${subject.name}", e)
         }
     }
 

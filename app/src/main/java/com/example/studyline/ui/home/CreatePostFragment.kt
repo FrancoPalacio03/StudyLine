@@ -39,7 +39,7 @@ class CreatePostFragment : Fragment() {
         (activity as? MainActivity)?.hideToolbarAndFab()
         // Vincular vistas
         titleInput = view.findViewById(R.id.title_input)
-        universitySelect = view.findViewById(R.id.universitySelect)
+        universitySelect = view.findViewById(R.id.testSelect)
         postText = view.findViewById(R.id.post_text)
         uploadButton = view.findViewById(R.id.upload_button)
         postButton = view.findViewById(R.id.post_button)
@@ -104,7 +104,6 @@ class CreatePostFragment : Fragment() {
             subjectId = subject,
             title = title,
             description = description,
-            date = Timestamp.now()
         )
 
 
