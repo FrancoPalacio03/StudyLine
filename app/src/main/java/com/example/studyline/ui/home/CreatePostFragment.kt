@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import com.example.studyline.MainActivity
 import com.example.studyline.R
 import com.example.studyline.data.model.Publication
+import com.example.studyline.data.model.SubjectMap
 import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.*
@@ -23,13 +22,21 @@ import java.util.*
 class CreatePostFragment : Fragment() {
 
     private lateinit var titleInput: EditText
-    private lateinit var universitySelect: Spinner
+    private lateinit var subjectSelect: Spinner
     private lateinit var postText: EditText
     private lateinit var uploadButton: Button
     private lateinit var postButton: Button
     private lateinit var selectedFiles: MutableList<Uri>
     private val REQUEST_CODE_FILE_PICKER = 101
     private val commandPublication= CommandPublication()
+    private var selectedSubject: SubjectMap? = null
+
+    private var subjects = listOf(
+        SubjectMap("SUB01", "Análisis Matemático I"),
+        SubjectMap("SUB02", "Física I"),
+        SubjectMap("SUB03", "Algoritmos de Programación"),
+        SubjectMap("SUB04", "Química GeneraL"),
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +46,7 @@ class CreatePostFragment : Fragment() {
         (activity as? MainActivity)?.hideToolbarAndFab()
         // Vincular vistas
         titleInput = view.findViewById(R.id.title_input)
-        universitySelect = view.findViewById(R.id.testSelect)
+        subjectSelect = view.findViewById(R.id.testSelect)
         postText = view.findViewById(R.id.post_text)
         uploadButton = view.findViewById(R.id.upload_button)
         postButton = view.findViewById(R.id.post_button)
@@ -47,14 +54,21 @@ class CreatePostFragment : Fragment() {
 
 
         // Configurar spinner
-        val universityOptions = arrayOf("Matemáticas", "Física", "Literatura")
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
-            universityOptions
+            subjects.map { it.name }
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        universitySelect.adapter = adapter
+        subjectSelect.adapter = adapter
+        subjectSelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedSubject = subjects[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                selectedSubject = null
+            }
+        }
 
         // Configurar botón de carga
         uploadButton.setOnClickListener { openFilePicker() }
@@ -89,7 +103,7 @@ class CreatePostFragment : Fragment() {
     private fun createPost() {
         val title = titleInput.text.toString()
         val description = postText.text.toString()
-        val subject = universitySelect.selectedItem.toString()
+        val subject = subjectSelect.selectedItem.toString()
 
         if (title.isBlank() || description.isBlank()) {
             Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()

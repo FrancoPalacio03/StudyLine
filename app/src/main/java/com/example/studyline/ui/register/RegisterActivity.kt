@@ -1,7 +1,10 @@
 package com.example.studyline.ui.register
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -20,9 +23,12 @@ import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import java.io.File
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_IMAGE_PICK = 2
     private var universities = listOf(
         UniversityMap("UN0", "Soy Autodidacta"),
         UniversityMap("UN1", "Universidad Tecnológica Nacional"),
@@ -30,6 +36,7 @@ class RegisterActivity : AppCompatActivity() {
         UniversityMap("UN3", "Universidad Nacional Arturo Jauretche"),
     )
     private var selectedUniversity: UniversityMap? = null
+    private var selectedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,55 +75,68 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
+        // Configurar clic en el ImageView para seleccionar o tomar foto
+        binding.imageView.setOnClickListener {
+            showImagePickerDialog()
+        }
+
+        // Configurar botón de registro
         binding.registerButton.setOnClickListener {
-            val name = binding.editTextName.text.toString()
-            val surname = binding.editTextSurname.text.toString()
-            val birthday = binding.editTextDateOfBirth.text.toString()
-            val email = binding.editTextEmail.text.toString()
-            val password = binding.editTextPassword.text.toString()
-            val confirmPassword = binding.editTextConfirmPassword.text.toString()
+            registerUser()
+        }
 
-            if (selectedUniversity == null) {
-                Toast.makeText(this, "Por favor selecciona una universidad", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+    }
+
+    private fun showImagePickerDialog() {
+        val options = arrayOf("Tomar foto", "Seleccionar de la galería")
+        AlertDialog.Builder(this)
+            .setTitle("Seleccionar imagen")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> takePhoto()
+                    1 -> pickImageFromGallery()
+                }
             }
+            .show()
+    }
 
+    private fun takePhoto() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+    }
 
-            val userRepo = UserRepository()
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_IMAGE_PICK)
+    }
 
-            if (email.isNotEmpty() && password == confirmPassword) {
-                FirebaseAuth.getInstance()
-                    .createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-                            // Si el UID es válido, crea el objeto User
-                            if (userId != null) {
-                                val userData = User(
-                                    userId = userId,
-                                    name = "$name $surname",
-                                    email = email,
-                                    birthday = birthday,
-                                    universityId = selectedUniversity!!.id
-                                )
-                                lifecycleScope.launch {
-                                    userRepo.registerUser(userData, null)
-                                }
-                                showHome("$name $surname", ProviderType.BASIC)
-                            } else {
-                                showAlert("Error al registrar")
-                            }
-                        } else {
-                            showAlert("Error al crear usuario: ${task.exception?.message}")
-                        }
-                    }
-            } else {
-                showAlert("Las contraseñas no coinciden")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_IMAGE_CAPTURE -> {
+                    val photo = data?.extras?.get("data") as? Bitmap
+                    selectedImageUri = saveBitmapToUri(photo)
+                    binding.imageView.setImageBitmap(photo)
+                }
+                REQUEST_IMAGE_PICK -> {
+                    val uri = data?.data
+                    selectedImageUri = uri
+                    binding.imageView.setImageURI(uri)
+                }
             }
-
         }
     }
+
+    private fun saveBitmapToUri(bitmap: Bitmap?): Uri? {
+        if (bitmap == null) return null
+        val file = File(cacheDir, "temp_image.jpg")
+        file.outputStream().use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+        }
+        return Uri.fromFile(file)
+    }
+
 
     private fun showAlert(message: String) {
         val builder = AlertDialog.Builder(this)
@@ -133,5 +153,50 @@ class RegisterActivity : AppCompatActivity() {
             putExtra("provider", provider.name)
         }
         startActivity(homeIntent)
+    }
+
+    private fun registerUser() {
+        val name = binding.editTextName.text.toString()
+        val surname = binding.editTextSurname.text.toString()
+        val birthday = binding.editTextDateOfBirth.text.toString()
+        val email = binding.editTextEmail.text.toString()
+        val password = binding.editTextPassword.text.toString()
+        val confirmPassword = binding.editTextConfirmPassword.text.toString()
+
+        if (selectedUniversity == null) {
+            Toast.makeText(this, "Por favor selecciona una universidad", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val userRepo = UserRepository()
+
+        if (email.isNotEmpty() && password == confirmPassword) {
+            FirebaseAuth.getInstance()
+                .createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid
+                        if (userId != null) {
+                            val userData = User(
+                                userId = userId,
+                                name = "$name $surname",
+                                email = email,
+                                birthday = birthday,
+                                universityId = selectedUniversity!!.id
+                            )
+                            lifecycleScope.launch {
+                                userRepo.registerUser(userData, selectedImageUri)
+                            }
+                            showHome("$name $surname", ProviderType.BASIC)
+                        } else {
+                            showAlert("Error al registrar")
+                        }
+                    } else {
+                        showAlert("Error al crear usuario: ${task.exception?.message}")
+                    }
+                }
+        } else {
+            showAlert("Las contraseñas no coinciden")
+        }
     }
 }

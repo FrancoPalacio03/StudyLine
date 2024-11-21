@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -21,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.studyline.data.model.Subject
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
 import com.example.studyline.data.model.User
@@ -126,12 +128,14 @@ class MainActivity : AppCompatActivity() {
         // Encuentra los TextViews en el encabezado usando el layout 'nav_header_main.xml'
         val mainUserName: TextView = headerView.findViewById(R.id.mainUserName)
         val mainMail: TextView = headerView.findViewById(R.id.mainMail)
-
+        val mainPhoto : ImageView = headerView.findViewById(R.id.imageView)
 
         // Actualiza los TextViews con la información del usuario
         if (user != null) {
             mainUserName.text = user.name ?: "Usuario"
             mainMail.text = user.email ?: "Sin correo disponible"
+            if(user.downloadUrl != null)
+                loadImageIntoImageView(user.downloadUrl ,mainPhoto)
         } else {
             mainUserName.text = "Invitado"
             mainMail.text = "Por favor inicia sesión"
@@ -146,6 +150,13 @@ class MainActivity : AppCompatActivity() {
     fun showToolbarAndFab() {
         binding.appBarMain.toolbar.visibility = View.VISIBLE
         binding.appBarMain.fab.visibility = View.VISIBLE
+    }
+
+    private fun loadImageIntoImageView(photoUrl: String, container: ImageView) {
+        Glide.with(this)
+            .load(photoUrl) // URL de la imagen
+            .circleCrop() // Aplica un recorte circular a la imagen
+            .into(container) // Carga la imagen en el ImageView
     }
 
 }

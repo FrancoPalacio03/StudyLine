@@ -22,9 +22,7 @@ class UserRepository {
             db.document(user.userId).set(user).await()
             if(photo != null){
                 val downloadUrl = fileServer.uploadPhotoGeneric("user", user.userId, photo)
-                db.document(user.userId).set(
-                    hashMapOf("downloadUrl" to downloadUrl)
-                )
+                db.document(user.userId).update("downloadUrl", downloadUrl).await()
             }
         }
         catch(e: Exception){

@@ -5,13 +5,12 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register_Activity"
-    android:layout_gravity="center">
+    tools:context=".ui.register.RegisterActivity">
 
     <LinearLayout
-        android:layout_width="350dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50sp"
+        android:layout_width="371dp"
+        android:layout_height="729dp"
+        android:layout_marginTop="50dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -26,83 +25,100 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
+                    android:layout_marginBottom="20dp"
                     android:text="Registro"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"
+                    android:gravity="center" />
 
                 <EditText
                     android:id="@+id/editTextName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
+                    android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:inputType="text"
-                    android:paddingBottom="20sp"
-                    android:hint="Nombre" />
+                    android:hint="Nombre"
+                    android:inputType="text" />
 
                 <EditText
                     android:id="@+id/editTextSurname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
+                    android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:inputType="text"
-                    android:paddingBottom="20sp"
-                    android:hint="Apellido" />
+                    android:hint="Apellido"
+                    android:inputType="text" />
 
                 <EditText
                     android:id="@+id/editTextEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
+                    android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:inputType="textEmailAddress"
-                    android:paddingBottom="20sp"
-                    android:hint="Email" />
+                    android:hint="Email"
+                    android:inputType="textEmailAddress" />
 
                 <EditText
                     android:id="@+id/editTextDateOfBirth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
+                    android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:inputType="date"
-                    android:paddingBottom="20sp"
-                    android:hint="Fecha de nacimiento" />
+                    android:hint="Fecha de nacimiento"
+                    android:inputType="date" />
 
                 <Spinner
                     android:id="@+id/universitySelect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
-                    android:spinnerMode="dropdown"
-                    />
+                    android:layout_marginBottom="20dp"
+                    android:spinnerMode="dropdown" />
+
+                <!-- Ícono de cámara centrado -->
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:contentDescription="Subir foto"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/icon_addphoto" />
+
+                <!-- Texto "Subir foto" centrado -->
+                <TextView
+                    android:id="@+id/uploadText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:text="Subir Foto"
+                    android:gravity="center"
+                    android:layout_gravity="center" />
 
                 <EditText
                     android:id="@+id/editTextPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
+                    android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:inputType="textPassword"
-                    android:paddingBottom="20sp"
-                    android:hint="Contraseña" />
+                    android:hint="Contraseña"
+                    android:inputType="textPassword" />
 
                 <EditText
                     android:id="@+id/editTextConfirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20sp"
+                    android:layout_marginBottom="20dp"
                     android:ems="10"
-                    android:inputType="textPassword"
-                    android:paddingBottom="20sp"
-                    android:hint="Repita contraseña" />
+                    android:hint="Repita contraseña"
+                    android:inputType="textPassword" />
 
+                <!-- Botón "Registrar" centrado -->
                 <Button
                     android:id="@+id/registerButton"
                     android:layout_width="wrap_content"
@@ -110,13 +126,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="64dp"
                     android:text="@string/action_register"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.222"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextConfirmPassword"
-                    app:layout_constraintVertical_bias="0.153" />
-
+                    android:layout_gravity="center" />
             </LinearLayout>
         </ScrollView>
 
