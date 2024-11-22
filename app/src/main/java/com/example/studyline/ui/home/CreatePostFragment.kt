@@ -27,31 +27,35 @@ class CreatePostFragment : Fragment() {
     private lateinit var uploadButton: Button
     private lateinit var postButton: Button
     private lateinit var selectedFiles: MutableList<Uri>
+    private lateinit var loadingSpinner: ProgressBar
+    private lateinit var selectedFileText: TextView
     private val REQUEST_CODE_FILE_PICKER = 101
-    private val commandPublication= CommandPublication()
+    private val commandPublication = CommandPublication()
     private var selectedSubject: SubjectMap? = null
 
     private var subjects = listOf(
         SubjectMap("SUB01", "Análisis Matemático I"),
         SubjectMap("SUB02", "Física I"),
         SubjectMap("SUB03", "Algoritmos de Programación"),
-        SubjectMap("SUB04", "Química GeneraL"),
+        SubjectMap("SUB04", "Química General"),
     )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_create_post, container, false)
         (activity as? MainActivity)?.hideToolbarAndFab()
+
         // Vincular vistas
         titleInput = view.findViewById(R.id.title_input)
         subjectSelect = view.findViewById(R.id.testSelect)
         postText = view.findViewById(R.id.post_text)
         uploadButton = view.findViewById(R.id.upload_button)
         postButton = view.findViewById(R.id.post_button)
+        selectedFileText = view.findViewById(R.id.selected_file)
+        loadingSpinner = view.findViewById(R.id.loading_spinner)
         selectedFiles = mutableListOf()
-
 
         // Configurar spinner
         val adapter = ArrayAdapter(
@@ -61,7 +65,7 @@ class CreatePostFragment : Fragment() {
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         subjectSelect.adapter = adapter
-        subjectSelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        subjectSelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedSubject = subjects[position]
             }
@@ -92,11 +96,18 @@ class CreatePostFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_FILE_PICKER && resultCode == Activity.RESULT_OK) {
             data?.clipData?.let {
+                selectedFiles.clear() // Limpiar los archivos previamente seleccionados
                 for (i in 0 until it.itemCount) {
                     selectedFiles.add(it.getItemAt(i).uri)
                 }
-            } ?: data?.data?.let { selectedFiles.add(it) }
-            Toast.makeText(requireContext(), "Archivos seleccionados: ${selectedFiles.size}", Toast.LENGTH_SHORT).show()
+            } ?: data?.data?.let {
+                selectedFiles.clear() // Limpiar los archivos previamente seleccionados
+                selectedFiles.add(it)
+            }
+
+            // Actualizar el texto con la cantidad de archivos seleccionados
+            val selectedFileText = "Archivos seleccionados: ${selectedFiles.size}"
+            this.selectedFileText.text = selectedFileText
         }
     }
 
@@ -110,6 +121,11 @@ class CreatePostFragment : Fragment() {
             return
         }
 
+        // Mostrar la rueda de carga y deshabilitar la pantalla
+        loadingSpinner.visibility = View.VISIBLE
+        postButton.isEnabled = false
+        uploadButton.isEnabled = false
+
         val postId = UUID.randomUUID().toString()
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
         val publication = Publication(
@@ -117,16 +133,23 @@ class CreatePostFragment : Fragment() {
             userId = userId,
             subjectId = subject,
             title = title,
-            description = description,
+            description = description
         )
 
-
         lifecycleScope.launch {
+            // Simula un proceso largo (como subir el post y los archivos)
             commandPublication.createNewPost(publication, selectedFiles)
+
+            // Después de la publicación, se esconde la rueda de carga y habilita la pantalla
+            loadingSpinner.visibility = View.GONE
+            postButton.isEnabled = true
+            uploadButton.isEnabled = true
+
+            // Redirigir al menú principal
+            activity?.runOnUiThread {
+                Toast.makeText(requireContext(), "Publicación realizada exitosamente", Toast.LENGTH_SHORT).show()
+                (activity as? MainActivity)?.onBackPressed()  // Vuelve al menú principal
+            }
         }
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        (activity as? MainActivity)?.showToolbarAndFab()
     }
 }

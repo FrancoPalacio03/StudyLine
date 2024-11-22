@@ -51,13 +51,20 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <!-- Descripción -->
-
         <TextView
             android:id="@+id/postDescription"
             android:layout_width="match_parent"
             android:layout_height="78dp"
             android:paddingVertical="8dp"
             android:text="Descripción" />
+
+        <!-- Archivos subidos -->
+        <LinearLayout
+            android:id="@+id/filesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="8dp"/>
 
         <!-- Interacciones: Comentarios, Likes, y Dislikes -->
         <LinearLayout
@@ -101,4 +108,3 @@
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
-
