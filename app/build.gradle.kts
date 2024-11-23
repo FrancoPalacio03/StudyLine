@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.activity)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

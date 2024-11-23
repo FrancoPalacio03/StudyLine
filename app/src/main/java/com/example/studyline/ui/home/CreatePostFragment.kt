@@ -18,6 +18,13 @@ import com.example.studyline.data.repository.PublicationRepositories.CommandPubl
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.*
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Task
+
 
 class CreatePostFragment : Fragment() {
 
@@ -32,6 +39,9 @@ class CreatePostFragment : Fragment() {
     private val REQUEST_CODE_FILE_PICKER = 101
     private val commandPublication = CommandPublication()
     private var selectedSubject: SubjectMap? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var currentLocation: Pair<Double, Double>? = null // Para almacenar latitud y longitud
+
 
     private var subjects = listOf(
         SubjectMap("SUB01", "Análisis Matemático I"),
@@ -46,6 +56,8 @@ class CreatePostFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_create_post, container, false)
         (activity as? MainActivity)?.hideToolbarAndFab()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        checkLocationPermissionAndFetchLocation()
 
         // Vincular vistas
         titleInput = view.findViewById(R.id.title_input)
@@ -128,29 +140,71 @@ class CreatePostFragment : Fragment() {
 
         val postId = UUID.randomUUID().toString()
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
+        val location = currentLocation ?: Pair(0.0, 0.0) // Valor por defecto si no se obtuvo ubicación
+
         val publication = Publication(
             publicationId = postId,
             userId = userId,
             subjectId = subject,
             title = title,
-            description = description
+            description = description,
+            latitude = location.first,
+            longitude = location.second
         )
 
         lifecycleScope.launch {
-            // Simula un proceso largo (como subir el post y los archivos)
             commandPublication.createNewPost(publication, selectedFiles)
 
-            // Después de la publicación, se esconde la rueda de carga y habilita la pantalla
             loadingSpinner.visibility = View.GONE
             postButton.isEnabled = true
             uploadButton.isEnabled = true
 
-            // Redirigir al menú principal
             activity?.runOnUiThread {
                 Toast.makeText(requireContext(), "Publicación realizada exitosamente", Toast.LENGTH_SHORT).show()
                 (activity as? MainActivity)?.showToolbarAndFab()
-                (activity as? MainActivity)?.onBackPressed()  // Vuelve al menú principal
+                (activity as? MainActivity)?.onBackPressed()
             }
         }
     }
+
+
+    private fun checkLocationPermissionAndFetchLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Solicitar permisos
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                1001
+            )
+            return
+        }
+
+        // Obtener ubicación
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            location?.let {
+                currentLocation = Pair(it.latitude, it.longitude)
+            }
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            checkLocationPermissionAndFetchLocation()
+        } else {
+            Toast.makeText(requireContext(), "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }

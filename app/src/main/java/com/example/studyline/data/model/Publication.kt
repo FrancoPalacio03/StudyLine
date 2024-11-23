@@ -15,4 +15,6 @@
         val files: List<String> = emptyList(),
         val likes : Int = 0,
         val dislikes : Int = 0,
+        val latitude: Double = 0.0,
+        val longitude: Double = 0.0
     )
