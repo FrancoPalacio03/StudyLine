@@ -1,10 +1,10 @@
-package com.example.studyline.ui.gallery
+package com.example.studyline.ui.OwnPost
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class GalleryViewModel : ViewModel() {
+class OwnPostViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is gallery Fragment"

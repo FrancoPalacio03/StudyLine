@@ -35,10 +35,12 @@ class CreatePostFragment : Fragment() {
     private lateinit var selectedFiles: MutableList<Uri>
     private lateinit var loadingSpinner: ProgressBar
     private lateinit var selectedFileText: TextView
+    private lateinit var photoButton: ImageView
     private lateinit var photoUtility: PhotoUtility
     private val REQUEST_CODE_FILE_PICKER = 101
     private val commandPublication = CommandPublication()
     private var selectedSubject: SubjectMap? = null
+    private var selectedImageUri: Uri? = null
 
     private var subjects = listOf(
         SubjectMap("SUB01", "Análisis Matemático I"),
@@ -58,10 +60,12 @@ class CreatePostFragment : Fragment() {
         photoUtility = PhotoUtility(requireContext())
 
         // Vincular vistas
+
         titleInput = view.findViewById(R.id.title_input)
         subjectSelect = view.findViewById(R.id.testSelect)
         postText = view.findViewById(R.id.post_text)
         uploadButton = view.findViewById(R.id.upload_button)
+        photoButton = view.findViewById(R.id.photo_select)
         postButton = view.findViewById(R.id.post_button)
         selectedFileText = view.findViewById(R.id.selected_file_count)
         loadingSpinner = view.findViewById(R.id.loading_circle)
@@ -84,8 +88,10 @@ class CreatePostFragment : Fragment() {
             }
         }
 
+        photoButton.setOnClickListener { openCamera() }
+
         // Configurar botón de carga
-        uploadButton.setOnClickListener { openFilePickerOrTakePhoto() }
+        uploadButton.setOnClickListener { Toast.makeText(requireContext(), "Franco pasa lo que tenias antes", Toast.LENGTH_SHORT).show() }
 
         // Configurar botón de publicación
         postButton.setOnClickListener { createPost() }
@@ -93,25 +99,18 @@ class CreatePostFragment : Fragment() {
         return view
     }
 
-    private fun openFilePickerOrTakePhoto() {
-        val options = arrayOf("Tomar foto", "Seleccionar de la galería")
+    private fun openCamera() {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Seleccionar opción")
-            .setItems(options) { dialog, which ->
-                when (which) {
-                    0 -> photoUtility.pickImageFromGallery(activity as Activity)
-                    1 -> photoUtility.takePhoto(activity as Activity)
-                }
-            }
+        photoUtility.takePhoto(activity as Activity)
         builder.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        photoUtility.handleActivityResult(requestCode, resultCode, data) { photoUri ->
-            photoUri?.let {
-                selectedFiles.add(it)
-                selectedFileText.text = "Archivos seleccionados: ${selectedFiles.size}"
+        photoUtility.handleActivityResult(requestCode, resultCode, data) { uri ->
+            selectedImageUri = uri
+            if (uri != null) {
+                photoButton.setImageURI(uri)
             }
         }
     }

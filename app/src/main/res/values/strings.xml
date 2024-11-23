@@ -8,9 +8,9 @@
     <string name="action_settings">Ajustes</string>
     <string name="action_logout">Cerrar Sesion</string>
 
-    <string name="menu_home">Feed</string>
-    <string name="menu_gallery">Mis publicaciones</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_home">Inicio</string>
+    <string name="menu_own_publications">Mis publicaciones</string>
+    <string name="menu_account">Account</string>
     <!-- Strings related to login -->
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>

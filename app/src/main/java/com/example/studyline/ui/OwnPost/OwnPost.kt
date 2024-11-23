@@ -1,4 +1,4 @@
-package com.example.studyline.ui.home
+package com.example.studyline.ui.OwnPost
 
 import android.os.Bundle
 import android.util.Log
@@ -11,14 +11,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
+import com.example.studyline.databinding.FragmentOwnPostBinding
 import com.example.studyline.databinding.FragmentHomeBinding
 import com.example.studyline.ui.publications.PublicationAdapter
-import kotlinx.coroutines.launch
-import com.example.studyline.R
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment() {
+class OwnPost : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     // This property is only valid between onCreateView and
@@ -55,10 +54,11 @@ class HomeFragment : Fragment() {
 
 
     private fun loadPublications () {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
         lifecycleScope.launch {
             try {
                 // Obtener publicaciones desde el repositorio
-                val publications = queryPublicationRepository.getRecentPublications()
+                val publications = queryPublicationRepository.getPublicationsByUser(userId)
 
                 // Actualizar el adaptador con las publicaciones obtenidas
                 if (publications != null) {
