@@ -1,10 +1,9 @@
 package com.example.studyline.ui.register
 
+import PhotoUtility
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -23,12 +22,10 @@ import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
-import java.io.File
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
-    private val REQUEST_IMAGE_CAPTURE = 1
-    private val REQUEST_IMAGE_PICK = 2
+    private lateinit var photoUtility: PhotoUtility
     private var universities = listOf(
         UniversityMap("UN0", "Soy Autodidacta"),
         UniversityMap("UN1", "Universidad Tecnológica Nacional"),
@@ -43,6 +40,8 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        photoUtility = PhotoUtility(this)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -55,27 +54,26 @@ class RegisterActivity : AppCompatActivity() {
     private fun setup() {
         title = "Register"
 
-        // Paso 2: Crear el adaptador mostrando solo los nombres
+        // Configurar adaptador para universidades
         val adapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            universities.map { it.name } // Mostrar solo los nombres
+            universities.map { it.name }
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        // Paso 3: Asignar el adaptador al Spinner
         binding.universitySelect.adapter = adapter
 
-        binding.universitySelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.universitySelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedUniversity = universities[position]
             }
+
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 selectedUniversity = null
             }
         }
 
-        // Configurar clic en el ImageView para seleccionar o tomar foto
+        // Configurar clic en ImageView para seleccionar o tomar foto
         binding.imageView.setOnClickListener {
             showImagePickerDialog()
         }
@@ -84,7 +82,6 @@ class RegisterActivity : AppCompatActivity() {
         binding.registerButton.setOnClickListener {
             registerUser()
         }
-
     }
 
     private fun showImagePickerDialog() {
@@ -93,50 +90,22 @@ class RegisterActivity : AppCompatActivity() {
             .setTitle("Seleccionar imagen")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> takePhoto()
-                    1 -> pickImageFromGallery()
+                    0 -> photoUtility.takePhoto(this)
+                    1 -> photoUtility.pickImageFromGallery(this)
                 }
             }
             .show()
     }
 
-    private fun takePhoto() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
-    }
-
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_IMAGE_PICK)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                REQUEST_IMAGE_CAPTURE -> {
-                    val photo = data?.extras?.get("data") as? Bitmap
-                    selectedImageUri = saveBitmapToUri(photo)
-                    binding.imageView.setImageBitmap(photo)
-                }
-                REQUEST_IMAGE_PICK -> {
-                    val uri = data?.data
-                    selectedImageUri = uri
-                    binding.imageView.setImageURI(uri)
-                }
+        photoUtility.handleActivityResult(requestCode, resultCode, data) { uri ->
+            selectedImageUri = uri
+            if (uri != null) {
+                binding.imageView.setImageURI(uri)
             }
         }
     }
-
-    private fun saveBitmapToUri(bitmap: Bitmap?): Uri? {
-        if (bitmap == null) return null
-        val file = File(cacheDir, "temp_image.jpg")
-        file.outputStream().use {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-        }
-        return Uri.fromFile(file)
-    }
-
 
     private fun showAlert(message: String) {
         val builder = AlertDialog.Builder(this)

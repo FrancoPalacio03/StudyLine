@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
             .get(LoginViewModel::class.java)
         setSupportActionBar(binding.appBarMain.toolbar)
 
-        binding.appBarMain.fab.setOnClickListener { view ->
+        binding.appBarMain.fab.setOnClickListener {
             val navController = findNavController(R.id.nav_host_fragment_content_main)
             navController.navigate(R.id.action_global_createPostFragment)
         }

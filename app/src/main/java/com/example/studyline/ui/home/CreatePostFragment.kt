@@ -1,13 +1,17 @@
 package com.example.studyline.ui.home
 
+import PhotoUtility
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.studyline.MainActivity
@@ -17,6 +21,8 @@ import com.example.studyline.data.model.SubjectMap
 import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 
 class CreatePostFragment : Fragment() {
@@ -29,6 +35,7 @@ class CreatePostFragment : Fragment() {
     private lateinit var selectedFiles: MutableList<Uri>
     private lateinit var loadingSpinner: ProgressBar
     private lateinit var selectedFileText: TextView
+    private lateinit var photoUtility: PhotoUtility
     private val REQUEST_CODE_FILE_PICKER = 101
     private val commandPublication = CommandPublication()
     private var selectedSubject: SubjectMap? = null
@@ -47,14 +54,17 @@ class CreatePostFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_create_post, container, false)
         (activity as? MainActivity)?.hideToolbarAndFab()
 
+        // Inicializar PhotoUtility
+        photoUtility = PhotoUtility(requireContext())
+
         // Vincular vistas
         titleInput = view.findViewById(R.id.title_input)
         subjectSelect = view.findViewById(R.id.testSelect)
         postText = view.findViewById(R.id.post_text)
         uploadButton = view.findViewById(R.id.upload_button)
         postButton = view.findViewById(R.id.post_button)
-        selectedFileText = view.findViewById(R.id.selected_file)
-        loadingSpinner = view.findViewById(R.id.loading_spinner)
+        selectedFileText = view.findViewById(R.id.selected_file_count)
+        loadingSpinner = view.findViewById(R.id.loading_circle)
         selectedFiles = mutableListOf()
 
         // Configurar spinner
@@ -75,7 +85,7 @@ class CreatePostFragment : Fragment() {
         }
 
         // Configurar botón de carga
-        uploadButton.setOnClickListener { openFilePicker() }
+        uploadButton.setOnClickListener { openFilePickerOrTakePhoto() }
 
         // Configurar botón de publicación
         postButton.setOnClickListener { createPost() }
@@ -83,31 +93,26 @@ class CreatePostFragment : Fragment() {
         return view
     }
 
-    private fun openFilePicker() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            type = "*/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-        startActivityForResult(intent, REQUEST_CODE_FILE_PICKER)
+    private fun openFilePickerOrTakePhoto() {
+        val options = arrayOf("Tomar foto", "Seleccionar de la galería")
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Seleccionar opción")
+            .setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> photoUtility.pickImageFromGallery(activity as Activity)
+                    1 -> photoUtility.takePhoto(activity as Activity)
+                }
+            }
+        builder.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_FILE_PICKER && resultCode == Activity.RESULT_OK) {
-            data?.clipData?.let {
-                selectedFiles.clear() // Limpiar los archivos previamente seleccionados
-                for (i in 0 until it.itemCount) {
-                    selectedFiles.add(it.getItemAt(i).uri)
-                }
-            } ?: data?.data?.let {
-                selectedFiles.clear() // Limpiar los archivos previamente seleccionados
+        photoUtility.handleActivityResult(requestCode, resultCode, data) { photoUri ->
+            photoUri?.let {
                 selectedFiles.add(it)
+                selectedFileText.text = "Archivos seleccionados: ${selectedFiles.size}"
             }
-
-            // Actualizar el texto con la cantidad de archivos seleccionados
-            val selectedFileText = "Archivos seleccionados: ${selectedFiles.size}"
-            this.selectedFileText.text = selectedFileText
         }
     }
 

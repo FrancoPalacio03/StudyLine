@@ -49,4 +49,6 @@ class PublicationAdapter(private var publications: List<Publication>,) :
         publications = newPublications
         notifyDataSetChanged() // Notificar al RecyclerView que los datos han cambiado
     }
+
+
 }
