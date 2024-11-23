@@ -1,0 +1,31 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_marginTop="10sp"
+        android:id="@+id/commentUserId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Usuario"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-medium" />
+
+    <TextView
+        android:id="@+id/commentDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fecha del comentario"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/commentDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Contenido del comentario"
+        android:textSize="16sp"
+        android:paddingTop="4dp" />
+</LinearLayout>

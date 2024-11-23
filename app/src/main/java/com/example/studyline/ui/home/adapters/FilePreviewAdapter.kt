@@ -1,4 +1,4 @@
-package com.example.studyline.ui.home
+package com.example.studyline.ui.home.adapters
 
 import android.net.Uri
 import android.view.LayoutInflater

@@ -2,6 +2,7 @@ package com.example.studyline.data.repository.PublicationRepositories
 
 import android.net.Uri
 import android.util.Log
+import com.example.studyline.data.model.Comment
 import com.example.studyline.data.model.Publication
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,16 +30,28 @@ class CommandPublication {
         }
     }
 
-    suspend fun createNewComment (originalPostId : String, comment : Publication) {
+    suspend fun createNewComment(originalPostId: String, comment: Comment) {
         try {
-            val originalPost = db.document(originalPostId)
-            db.document(comment.publicationId).set(comment).await()
-            originalPost.update("commentsId", FieldValue.arrayUnion(comment.publicationId)).await()
-            Log.i("createNewComment", "Successfully to create the comment ${comment.publicationId}")
+            // Referencia a la subcolección "comments" dentro de la publicación original
+            val commentsCollection = db.document(originalPostId).collection("comments")
+            val newCommentRef = commentsCollection.document() // Genera un ID único para el comentario
+
+            val commentWithId = comment.copy(commentId = newCommentRef.id) // Asigna el ID generado
+            newCommentRef.set(commentWithId).await()
+
+            // Actualiza la lista de comentarios en la publicación original
+            val originalPostRef = db.document(originalPostId)
+            originalPostRef.update("commentsId", FieldValue.arrayUnion(newCommentRef.id)).await()
+
+            Log.i("createNewComment", "Successfully created the comment ${newCommentRef.id}")
         } catch (e: Exception) {
-            Log.e("createNewComment", "Failed to create the comment ${comment.publicationId}", e)
+            Log.e("createNewComment", "Failed to create the comment for $originalPostId", e)
         }
     }
+
+
+
+
 
     // DELETE FUNCTIONS
     suspend fun deletePostById (postId : String) {
