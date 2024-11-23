@@ -15,10 +15,10 @@
         android:text="Crear Publicación"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="8dp" />
 
     <!-- Cuadro de texto para el título -->
     <EditText
@@ -42,8 +42,8 @@
         android:layout_margin="8dp"
         android:minHeight="48dp"
         android:spinnerMode="dropdown"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_input" />
 
     <!-- Cuadro de texto para la publicación -->
@@ -57,11 +57,11 @@
         android:background="@android:color/transparent"
         android:alpha="0.8"
         android:padding="16dp"
-        android:layout_margin="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/testSelect"
-        app:layout_constraintBottom_toTopOf="@id/upload_section" />
+        app:layout_constraintBottom_toTopOf="@id/upload_section"
+        android:layout_margin="8dp" />
 
     <!-- Sección para subir archivos -->
     <LinearLayout
@@ -76,6 +76,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/post_text">
 
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:indeterminate="true" />
+
         <!-- Botón para seleccionar archivos -->
         <Button
             android:id="@+id/upload_button"
@@ -86,50 +95,14 @@
 
         <!-- Texto que indica los archivos seleccionados -->
         <TextView
-            android:id="@+id/selected_file_count"
+            android:id="@+id/selected_file"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Archivos seleccionados: 0"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Sección de fotos -->
-    <LinearLayout
-        android:id="@+id/photo_section"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="16dp"
-        android:elevation="4dp"
-        android:layout_margin="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/upload_section">
-
-        <ImageView
-            android:id="@+id/photo_select"
-            android:layout_width="86dp"
-            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:maxWidth="200dp"
             android:layout_gravity="center"
-            android:contentDescription="Subir foto"
-            android:scaleType="centerCrop"
-            android:src="@drawable/icon_addphoto" />
+            android:text="No se ha seleccionado ningún archivo" />
     </LinearLayout>
-
-    <!-- Indicador de carga -->
-    <ProgressBar
-        android:id="@+id/loading_circle"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:indeterminate="true"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/post_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Botón de publicación -->
     <Button
@@ -138,11 +111,10 @@
         android:layout_height="wrap_content"
         android:text="Publicar"
         android:textColor="@android:color/white"
-        android:padding="16dp"
-        android:layout_margin="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photo_section"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
+        app:layout_constraintTop_toBottomOf="@id/upload_section"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="16dp"
+        android:layout_margin="8dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

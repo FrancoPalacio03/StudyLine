@@ -1,17 +1,13 @@
 package com.example.studyline.ui.home
 
-import PhotoUtility
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.studyline.MainActivity
@@ -21,8 +17,6 @@ import com.example.studyline.data.model.SubjectMap
 import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
-import java.io.FileOutputStream
-import java.io.IOException
 import java.util.*
 
 class CreatePostFragment : Fragment() {
@@ -35,12 +29,9 @@ class CreatePostFragment : Fragment() {
     private lateinit var selectedFiles: MutableList<Uri>
     private lateinit var loadingSpinner: ProgressBar
     private lateinit var selectedFileText: TextView
-    private lateinit var photoButton: ImageView
-    private lateinit var photoUtility: PhotoUtility
     private val REQUEST_CODE_FILE_PICKER = 101
     private val commandPublication = CommandPublication()
     private var selectedSubject: SubjectMap? = null
-    private var selectedImageUri: Uri? = null
 
     private var subjects = listOf(
         SubjectMap("SUB01", "Análisis Matemático I"),
@@ -56,19 +47,14 @@ class CreatePostFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_create_post, container, false)
         (activity as? MainActivity)?.hideToolbarAndFab()
 
-        // Inicializar PhotoUtility
-        photoUtility = PhotoUtility(requireContext())
-
         // Vincular vistas
-
         titleInput = view.findViewById(R.id.title_input)
         subjectSelect = view.findViewById(R.id.testSelect)
         postText = view.findViewById(R.id.post_text)
         uploadButton = view.findViewById(R.id.upload_button)
-        photoButton = view.findViewById(R.id.photo_select)
         postButton = view.findViewById(R.id.post_button)
-        selectedFileText = view.findViewById(R.id.selected_file_count)
-        loadingSpinner = view.findViewById(R.id.loading_circle)
+        selectedFileText = view.findViewById(R.id.selected_file)
+        loadingSpinner = view.findViewById(R.id.loading_spinner)
         selectedFiles = mutableListOf()
 
         // Configurar spinner
@@ -88,10 +74,8 @@ class CreatePostFragment : Fragment() {
             }
         }
 
-        photoButton.setOnClickListener { openCamera() }
-
         // Configurar botón de carga
-        uploadButton.setOnClickListener { Toast.makeText(requireContext(), "Franco pasa lo que tenias antes", Toast.LENGTH_SHORT).show() }
+        uploadButton.setOnClickListener { openFilePicker() }
 
         // Configurar botón de publicación
         postButton.setOnClickListener { createPost() }
@@ -99,19 +83,31 @@ class CreatePostFragment : Fragment() {
         return view
     }
 
-    private fun openCamera() {
-        val builder = AlertDialog.Builder(requireContext())
-        photoUtility.takePhoto(activity as Activity)
-        builder.show()
+    private fun openFilePicker() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            type = "*/*"
+            addCategory(Intent.CATEGORY_OPENABLE)
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        }
+        startActivityForResult(intent, REQUEST_CODE_FILE_PICKER)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        photoUtility.handleActivityResult(requestCode, resultCode, data) { uri ->
-            selectedImageUri = uri
-            if (uri != null) {
-                photoButton.setImageURI(uri)
+        if (requestCode == REQUEST_CODE_FILE_PICKER && resultCode == Activity.RESULT_OK) {
+            data?.clipData?.let {
+                selectedFiles.clear() // Limpiar los archivos previamente seleccionados
+                for (i in 0 until it.itemCount) {
+                    selectedFiles.add(it.getItemAt(i).uri)
+                }
+            } ?: data?.data?.let {
+                selectedFiles.clear() // Limpiar los archivos previamente seleccionados
+                selectedFiles.add(it)
             }
+
+            // Actualizar el texto con la cantidad de archivos seleccionados
+            val selectedFileText = "Archivos seleccionados: ${selectedFiles.size}"
+            this.selectedFileText.text = selectedFileText
         }
     }
 
@@ -152,6 +148,7 @@ class CreatePostFragment : Fragment() {
             // Redirigir al menú principal
             activity?.runOnUiThread {
                 Toast.makeText(requireContext(), "Publicación realizada exitosamente", Toast.LENGTH_SHORT).show()
+                (activity as? MainActivity)?.showToolbarAndFab()
                 (activity as? MainActivity)?.onBackPressed()  // Vuelve al menú principal
             }
         }
