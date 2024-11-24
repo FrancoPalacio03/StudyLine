@@ -1,12 +1,26 @@
 package com.example.studyline.ui.home
 
+import android.Manifest
+import android.app.DownloadManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.studyline.R
 import com.example.studyline.data.model.Comment
 import com.example.studyline.data.model.Publication
 import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
@@ -16,6 +30,7 @@ import com.example.studyline.ui.home.adapters.CommentsAdapter
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import java.io.File
 import java.security.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -29,6 +44,7 @@ class PostDetailFragment : Fragment() {
     private val commandPublication = CommandPublication()
     private val queryPublication = QueryPublication()
     private var publicationId: String? = null
+    private val REQUEST_WRITE_STORAGE = 100
 
     private lateinit var commentsAdapter: CommentsAdapter
 
@@ -86,8 +102,8 @@ class PostDetailFragment : Fragment() {
                 binding.postCountLike.text = publication.likes.toString()
                 binding.postCountDislike.text = publication.dislikes.toString()
 
+                loadFiles(publication.files)
 
-                // Cargar comentarios desde la subcolección
                 loadComments(postId)
             } else {
                 showSnackbar("La publicación no se encontró.")
@@ -123,6 +139,8 @@ class PostDetailFragment : Fragment() {
                 binding.commentInput.clearFocus()
                 commentsAdapter.addComment(newComment)
                 showSnackbar("Comentario añadido.")
+
+
             } catch (e: Exception) {
                 showSnackbar("Error al añadir el comentario.")
             }
@@ -146,6 +164,68 @@ class PostDetailFragment : Fragment() {
                 arguments = Bundle().apply {
                     putString(ARG_PUBLICATION_ID, publicationId)
                 }
+            }
+        }
+    }
+
+    private fun loadFiles(files: List<String>) {
+        val filesLayout = binding.filesLayout
+        files.forEach { fileUrl ->
+            val fileButton = Button(requireContext()).apply {
+                text = "Descargar archivo"
+                setOnClickListener { downloadFile(fileUrl) }
+            }
+            filesLayout.addView(fileButton)
+        }
+    }
+
+    private fun downloadFile(fileUrl: String) {
+        if (checkStoragePermission()) {
+            val downloadManager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val uri = Uri.parse(fileUrl)
+            val request = DownloadManager.Request(uri).apply {
+                setTitle("Descargando archivo")
+                setDescription("Archivo relacionado con la publicación.")
+                setDestinationInExternalPublicDir(
+                    "/Download/publications", File(uri.path).name
+                )
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            }
+            downloadManager.enqueue(request)
+        } else {
+            showSnackbar("Se requiere permiso de almacenamiento para descargar archivos.")
+        }
+    }
+
+    private fun checkStoragePermission(): Boolean {
+        return if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            true
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_WRITE_STORAGE
+            )
+            false
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_WRITE_STORAGE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso concedido, proceder con la operación
+            } else {
+                showSnackbar("Permiso de almacenamiento denegado.")
             }
         }
     }
