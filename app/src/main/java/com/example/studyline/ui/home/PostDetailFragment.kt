@@ -13,6 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -171,13 +173,48 @@ class PostDetailFragment : Fragment() {
     private fun loadFiles(files: List<String>) {
         val filesLayout = binding.filesLayout
         files.forEach { fileUrl ->
-            val fileButton = Button(requireContext()).apply {
-                text = "Descargar archivo"
+            val fileExtension = getFileExtension(fileUrl)
+
+            // Crear contenedor para el icono y el botón de descarga
+            val fileItemLayout = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(16, 16, 16, 16)
+            }
+
+            // Icono de vista previa
+            val fileIcon = ImageView(requireContext()).apply {
+                val iconResId = when {
+                    fileExtension in listOf("jpg", "jpeg", "png", "gif") -> R.drawable.ic_image
+                    fileExtension == "pdf" -> R.drawable.ic_pdf
+                    fileExtension in listOf("txt", "doc", "docx") -> R.drawable.ic_text_file
+                    else -> R.drawable.ic_generic_file
+                }
+                setImageResource(iconResId)
+                layoutParams = ViewGroup.LayoutParams(100, 100) // Tamaño pequeño
+            }
+
+            // Botón de descarga
+            val downloadButton = Button(requireContext()).apply {
+                text = "Descargar"
                 setOnClickListener { downloadFile(fileUrl) }
             }
-            filesLayout.addView(fileButton)
+
+            // Añadir el icono y el botón al layout
+            fileItemLayout.addView(fileIcon)
+            fileItemLayout.addView(downloadButton)
+
+            // Agregar el layout a la vista principal
+            filesLayout.addView(fileItemLayout)
         }
     }
+
+    private fun getFileExtension(fileUrl: String): String {
+        return fileUrl.substring(fileUrl.lastIndexOf(".") + 1).lowercase(Locale.getDefault())
+    }
+
+
+
+
 
     private fun downloadFile(fileUrl: String) {
         if (checkStoragePermission()) {
