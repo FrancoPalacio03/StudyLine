@@ -49,19 +49,19 @@
     <!-- Cuadro de texto para la publicación -->
     <EditText
         android:id="@+id/post_text"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_width="370dp"
+        android:layout_height="346dp"
+        android:layout_margin="8dp"
+        android:alpha="0.8"
+        android:background="@android:color/transparent"
+        android:gravity="top|start"
         android:hint="Escribe tu publicación..."
         android:inputType="textMultiLine"
-        android:gravity="top|start"
-        android:background="@android:color/transparent"
-        android:alpha="0.8"
         android:padding="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/testSelect"
         app:layout_constraintBottom_toTopOf="@id/upload_section"
-        android:layout_margin="8dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/testSelect" />
 
     <!-- Sección para subir archivos -->
     <LinearLayout

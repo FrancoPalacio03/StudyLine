@@ -39,15 +39,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:padding="2dp"
-                    android:text="Location"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
                     android:id="@+id/postDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -89,40 +80,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:orientation="horizontal"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:id="@+id/postCountLike"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:text="Num"
-                android:gravity="center"/>
+            android:paddingTop="8dp"
+            android:gravity="center_horizontal">
 
             <!-- Likes -->
             <ImageView
-                android:id="@+id/btnLike"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:contentDescription="Like"
-                android:src="@drawable/icon_like" />
+                android:id="@+id/btnEdit"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Edit"
+                android:src="@drawable/icon_edit"
+                android:layout_marginEnd="16dp"/>
 
-            <TextView
-                android:id="@+id/postCountDislike"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="16dp"
-                android:text="Num"
-                android:gravity="center"/>
-
-            <!-- Dislikes -->
             <ImageView
-                android:id="@+id/btnDislike"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:contentDescription="Dislike"
-                android:src="@drawable/icon_dislike" />
+                android:id="@+id/btnDelete"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Delete"
+                android:src="@drawable/icon_delete"
+                android:layout_marginStart="16dp"/>
+
         </LinearLayout>
 
     </LinearLayout>

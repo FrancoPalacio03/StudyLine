@@ -13,8 +13,8 @@
         val description: String? = null,
         val date: Timestamp = Timestamp.now(),
         val files: List<String> = emptyList(),
-        val likes : Int = 0,
-        val dislikes : Int = 0,
+        var likes : Int = 0,
+        var dislikes : Int = 0,
         val latitude: Double = 0.0,
         val longitude: Double = 0.0
     )

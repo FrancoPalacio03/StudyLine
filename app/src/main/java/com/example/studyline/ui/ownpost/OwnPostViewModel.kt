@@ -1,4 +1,4 @@
-package com.example.studyline.ui.OwnPost
+package com.example.studyline.ui.ownpost
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

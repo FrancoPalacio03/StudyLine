@@ -124,7 +124,7 @@ class CommandPublication {
 
     suspend fun dislikePublicationForId (publicationId: String) {
         try {
-            db.document(publicationId).update("likes", FieldValue.increment(-1)).await()
+            db.document(publicationId).update("dislikes", FieldValue.increment(1)).await()
         } catch (e: Exception) {Log.e("dislikePublicationForId", "Failed to decrement the like of publications", e)}
     }
 }

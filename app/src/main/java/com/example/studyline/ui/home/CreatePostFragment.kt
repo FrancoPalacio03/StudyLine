@@ -21,6 +21,7 @@ import java.util.*
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
@@ -162,7 +163,7 @@ class CreatePostFragment : Fragment() {
             activity?.runOnUiThread {
                 Toast.makeText(requireContext(), "Publicación realizada exitosamente", Toast.LENGTH_SHORT).show()
                 (activity as? MainActivity)?.showToolbarAndFab()
-                (activity as? MainActivity)?.onBackPressed()
+                findNavController().navigateUp() // Navega hacia atrás en la pila de navegación
             }
         }
     }
@@ -205,6 +206,11 @@ class CreatePostFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        (activity as? MainActivity)?.showToolbarAndFab()
     }
 
 }

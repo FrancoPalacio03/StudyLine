@@ -1,30 +1,32 @@
-package com.example.studyline.ui.OwnPost
+package com.example.studyline.ui.ownpost
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.studyline.data.model.Publication
+import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
 import com.example.studyline.databinding.FragmentOwnPostBinding
-import com.example.studyline.databinding.FragmentHomeBinding
-import com.example.studyline.ui.publications.PublicationAdapter
+import com.example.studyline.ui.publications.OwnPublicationAdapter
+import com.example.studyline.utils.MapsUtility
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class OwnPost : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentOwnPostBinding? = null
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var adapter: PublicationAdapter
+    private lateinit var adapter: OwnPublicationAdapter
     private val queryPublicationRepository = QueryPublication()
+    private val commandPublicationRepository = CommandPublication()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,12 +34,14 @@ class OwnPost : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentOwnPostBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
-        val recyclerView = binding.rvPublications
-        adapter = PublicationAdapter(emptyList())
+        val recyclerView = binding.rvOwnPublications
+        adapter = OwnPublicationAdapter(
+            mutableListOf(),
+            onEditClick = { publication -> Log.d("handleEdit", "no implemented yet")},
+            onDeleteClick = { publication -> handleDelete(publication)})
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
@@ -45,6 +49,24 @@ class OwnPost : Fragment() {
         loadPublications()
 
         return root
+    }
+
+    private fun handleDelete(publication: Publication) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Eliminar Publicación")
+        builder.setMessage("¿Desea eliminar esta publicación?")
+        builder.setPositiveButton("Sí") { dialog, _ ->
+            lifecycleScope.launch{
+                commandPublicationRepository.deletePostById(publication.publicationId)
+                loadPublications()
+            }
+            dialog.dismiss() // Cerrar el diálogo
+        }
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
     override fun onDestroyView() {
