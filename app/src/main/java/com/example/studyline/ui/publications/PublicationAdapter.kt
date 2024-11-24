@@ -6,9 +6,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studyline.R
 import com.example.studyline.data.model.Publication
+import com.example.studyline.ui.home.PostDetailFragment
 import com.example.studyline.utils.MapsUtility
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -19,6 +21,8 @@ import java.util.Locale
         private val mapsUtility: MapsUtility,
         private val onLikeDislikeClicked: (Publication, Boolean) -> Unit,) :
     RecyclerView.Adapter<PublicationAdapter.PublicationViewHolder>() {
+
+        private var itemClickListener: ((String) -> Unit)? = null // Definimos un listener privado
 
     // ViewHolder: Representa una tarjeta individual en la lista
     inner class PublicationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -42,6 +46,10 @@ import java.util.Locale
 
             itemView.findViewById<ImageView>(R.id.btnDislike).setOnClickListener{
                 onLikeDislikeClicked(publication, false)
+            }
+
+            itemView.setOnClickListener {
+                itemClickListener?.invoke(publication.publicationId) // Llama al listener cuando se hace clic
             }
         }
     }
@@ -74,6 +82,10 @@ import java.util.Locale
             notifyItemChanged(index) // Actualizar solo el elemento modificado
         }
     }
+
+        fun setOnItemClickListener(listener: (String) -> Unit) {
+            itemClickListener = listener
+        }
 
 
 }

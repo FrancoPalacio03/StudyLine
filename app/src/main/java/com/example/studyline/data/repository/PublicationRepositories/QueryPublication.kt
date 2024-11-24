@@ -1,6 +1,7 @@
 package com.example.studyline.data.repository.PublicationRepositories
 
 import android.util.Log
+import com.example.studyline.data.model.Comment
 import com.example.studyline.data.model.Publication
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot // Representa un conjunto de documentos que resultan de una consulta.
@@ -19,6 +20,22 @@ class QueryPublication {
         } catch (e: Exception) {
             Log.e("getPublicationById", "Failed to get info for Post ${publicationId}", e)
             null
+        }
+    }
+
+    suspend fun getCommentsByPublicationId(publicationId: String): List<Comment> {
+        return try {
+            val commentsSnapshot = db.document(publicationId)
+                .collection("comments")
+                .get()
+                .await()
+
+            val comments = commentsSnapshot.toObjects(Comment::class.java)
+            Log.i("getCommentsByPublicationId", "Successfully fetched comments for $publicationId")
+            comments
+        } catch (e: Exception) {
+            Log.e("getCommentsByPublicationId", "Failed to fetch comments for $publicationId", e)
+            emptyList()
         }
     }
 

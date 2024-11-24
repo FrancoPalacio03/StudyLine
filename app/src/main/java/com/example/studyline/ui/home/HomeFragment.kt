@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
 import com.example.studyline.databinding.FragmentHomeBinding
@@ -21,6 +22,8 @@ import com.example.studyline.data.repository.PublicationRepositories.CommandPubl
 import com.example.studyline.utils.MapsUtility
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+
+import androidx.navigation.fragment.findNavController
 
 class HomeFragment : Fragment() {
 
@@ -50,6 +53,11 @@ class HomeFragment : Fragment() {
                                     })
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+
+        // Configurar el OnClickListener para los ítems
+        adapter.setOnItemClickListener { publicationId ->
+            openPostDetail(publicationId) // Llamar a la función openPostDetail cuando se hace clic en un ítem
+        }
 
         // Cargar publicaciones
         loadPublications()
@@ -90,8 +98,15 @@ class HomeFragment : Fragment() {
                     adapter.updateData(publications)
                 }
             } catch (e: Exception) {
-                Log.e("MainActivity", "Error al cargar publicaciones", e)
+                Log.e("HomeFragment", "Error al cargar publicaciones", e)
             }
         }
+    }
+
+    private fun openPostDetail(publicationId: String) {
+        val bundle = Bundle().apply {
+            putString("publicationId", publicationId)
+        }
+        findNavController().navigate(R.id.action_homeFragment_to_postDetailFragment, bundle)
     }
 }
