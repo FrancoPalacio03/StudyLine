@@ -10,6 +10,8 @@
         android:id="@+id/rvOwnPublications"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="39dp"
+        tools:layout_editor_absoluteY="-115dp"
         tools:listitem="@layout/item_publication_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

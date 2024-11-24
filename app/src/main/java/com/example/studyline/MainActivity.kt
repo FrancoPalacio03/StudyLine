@@ -2,6 +2,7 @@ package com.example.studyline
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,8 +16,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.Glide
 import com.example.studyline.data.model.User
 import com.example.studyline.data.repository.SubjectRepository
@@ -39,7 +42,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var loginViewModel: LoginViewModel
     private val userRepo = UserRepository()
-    private val subjectRepo = SubjectRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -126,8 +129,8 @@ class MainActivity : AppCompatActivity() {
 
         // Actualiza los TextViews con la información del usuario
         if (user != null) {
-            mainUserName.text = user.name ?: "Usuario"
-            mainMail.text = user.email ?: "Sin correo disponible"
+            mainUserName.text = user.name
+            mainMail.text = user.email
             if(user.downloadUrl != null)
                 loadImageIntoImageView(user.downloadUrl ,mainPhoto)
         } else {

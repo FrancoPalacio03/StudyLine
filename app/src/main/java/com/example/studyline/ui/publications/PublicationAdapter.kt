@@ -69,13 +69,13 @@ import java.util.Locale
     override fun getItemCount(): Int = publications.size
 
     // Actualizar los datos cuando cambien
-    fun updateData(newPublications: List<Publication>) {
+        fun updateData(newPublications: List<Publication>) {
         publications.clear() // Vaciar la lista actual
         publications.addAll(newPublications) // Agregar las nuevas publicaciones
         notifyDataSetChanged() // Notificar al RecyclerView que los datos han cambiado
     }
 
-    fun updatePublication(publication: Publication) {
+        fun updatePublication(publication: Publication) {
         val index = publications.indexOfFirst { it.publicationId == publication.publicationId }
         if (index != -1) {
             publications[index] = publication // Modificar el elemento en la lista mutable
