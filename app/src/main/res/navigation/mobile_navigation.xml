@@ -23,9 +23,9 @@
 
     <fragment
         android:id="@+id/nav_account"
-        android:name="com.example.studyline.ui.slideshow.SlideshowFragment"
+        android:name="com.example.studyline.ui.account.AccountFragment"
         android:label="@string/menu_account"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_account" />
 
     <fragment
         android:id="@+id/createPostFragment"

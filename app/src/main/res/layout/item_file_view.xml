@@ -11,18 +11,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Archivo"
+        android:text="@string/file_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
         android:id="@+id/download_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Descargar" />
+        android:text="@string/download_button_text" />
 
     <Button
         android:id="@+id/open_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Abrir" />
+        android:text="@string/open_button_text" />
 </LinearLayout>

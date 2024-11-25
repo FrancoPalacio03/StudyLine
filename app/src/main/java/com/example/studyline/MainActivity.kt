@@ -1,6 +1,8 @@
 package com.example.studyline
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -16,6 +18,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +33,7 @@ import com.example.studyline.ui.login.LoginViewModel
 import com.example.studyline.ui.login.LoginViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 enum class ProviderType{
@@ -46,6 +50,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Recuperar idioma y tema guardados desde SharedPreferences
+        val sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val savedLanguage = sharedPreferences.getString("language", "es") ?: "es"
+        val savedTheme = sharedPreferences.getInt("theme", AppCompatDelegate.MODE_NIGHT_NO)
+
+        // Aplicar idioma y tema si son distintos
+        updateLocale(savedLanguage)
+        AppCompatDelegate.setDefaultNightMode(savedTheme)
+
+        // Verificar si el usuario está autenticado
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
             val intent = Intent(this, LoginActivity::class.java)
@@ -78,13 +92,11 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val userId= FirebaseAuth.getInstance().currentUser?.uid
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
         lifecycleScope.launch {
             val user = userRepo.getUserById(userId.toString())
             setupNavigationHeader(user)
         }
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -97,9 +109,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
 
                 true
-
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -107,8 +117,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
-
-
         return true
     }
 
@@ -125,14 +133,14 @@ class MainActivity : AppCompatActivity() {
         // Encuentra los TextViews en el encabezado usando el layout 'nav_header_main.xml'
         val mainUserName: TextView = headerView.findViewById(R.id.mainUserName)
         val mainMail: TextView = headerView.findViewById(R.id.mainMail)
-        val mainPhoto : ImageView = headerView.findViewById(R.id.imageView)
+        val mainPhoto: ImageView = headerView.findViewById(R.id.imageView)
 
         // Actualiza los TextViews con la información del usuario
         if (user != null) {
             mainUserName.text = user.name
             mainMail.text = user.email
-            if(user.downloadUrl != null)
-                loadImageIntoImageView(user.downloadUrl ,mainPhoto)
+            if (user.downloadUrl != null)
+                loadImageIntoImageView(user.downloadUrl, mainPhoto)
         } else {
             mainUserName.text = "Invitado"
             mainMail.text = "Por favor inicia sesión"
@@ -156,4 +164,14 @@ class MainActivity : AppCompatActivity() {
             .into(container) // Carga la imagen en el ImageView
     }
 
+    // Función para actualizar el idioma de la aplicación
+    private fun updateLocale(languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val config = Configuration(resources.configuration).apply {
+            setLocale(locale)
+        }
+        resources.updateConfiguration(config, resources.displayMetrics)
+        
+    }
 }

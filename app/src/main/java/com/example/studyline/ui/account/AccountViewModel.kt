@@ -1,4 +1,4 @@
-package com.example.studyline.ui.slideshow
+package com.example.studyline.ui.account
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

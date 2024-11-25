@@ -12,7 +12,7 @@
         android:id="@+id/post_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Crear Publicación"
+        android:text="@string/create_post"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,7 @@
         android:id="@+id/title_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Escribe el título aquí..."
+        android:hint="@string/title_hint"
         android:inputType="text"
         android:background="@android:color/transparent"
         android:padding="16dp"
@@ -55,7 +55,7 @@
         android:alpha="0.8"
         android:background="@android:color/transparent"
         android:gravity="top|start"
-        android:hint="Escribe tu publicación..."
+        android:hint="@string/post_text_hint"
         android:inputType="textMultiLine"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/upload_section"
@@ -76,7 +76,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/post_text">
 
-
         <ProgressBar
             android:id="@+id/loading_spinner"
             android:layout_width="wrap_content"
@@ -90,7 +89,7 @@
             android:id="@+id/upload_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Subir archivo"
+            android:text="@string/upload_file"
             android:layout_marginEnd="16dp" />
 
         <!-- Texto que indica los archivos seleccionados -->
@@ -101,7 +100,7 @@
             android:gravity="center_vertical"
             android:maxWidth="200dp"
             android:layout_gravity="center"
-            android:text="No se ha seleccionado ningún archivo" />
+            android:text="@string/no_file_selected" />
     </LinearLayout>
 
     <!-- Botón de publicación -->
@@ -109,7 +108,7 @@
         android:id="@+id/post_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Publicar"
+        android:text="@string/post_button"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

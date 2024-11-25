@@ -23,7 +23,7 @@
             android:layout_weight="1"
             android:fontFamily="sans-serif-medium"
             android:paddingBottom="4dp"
-            android:text="Título Publicación"
+            android:text="@string/post_title"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-light"
-            android:text="Fecha"
+            android:text="@string/post_date"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
@@ -42,7 +42,7 @@
         android:background="?attr/selectableItemBackground"
         android:fontFamily="sans-serif"
         android:paddingVertical="4dp"
-        android:text="Materia"
+        android:text="@string/subject"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <!-- Descripción -->
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="78dp"
         android:paddingVertical="8dp"
-        android:text="Descripción" />
+        android:text="@string/description" />
 
     <!-- Archivos subidos -->
     <LinearLayout
@@ -73,7 +73,7 @@
             android:id="@+id/postCountLike"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:text="Num"
+            android:text="@string/like_count"
             android:gravity="center"/>
 
         <!-- Likes -->
@@ -89,7 +89,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="16dp"
-            android:text="Num"
+            android:text="@string/dislike_count"
             android:gravity="center"/>
 
         <!-- Dislikes -->
@@ -114,8 +114,6 @@
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 
-
-
     <!-- Entrada de comentarios y botón al final -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -128,15 +126,13 @@
             android:id="@+id/comment_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Escribe un comentario..." />
+            android:hint="@string/comment_hint" />
 
         <Button
             android:id="@+id/add_comment_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Agregar comentario"
+            android:text="@string/add_comment"
             />
     </LinearLayout>
 </LinearLayout>
-
-
