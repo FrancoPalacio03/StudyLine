@@ -58,7 +58,7 @@
         />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/googleLogin"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_gravity="center"

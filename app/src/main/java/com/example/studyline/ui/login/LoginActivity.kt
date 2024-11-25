@@ -16,14 +16,19 @@ import android.widget.Toast
 import com.example.studyline.MainActivity
 import com.example.studyline.ui.register.RegisterActivity
 import com.example.studyline.databinding.ActivityLoginBinding
-
 import com.example.studyline.R
-import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val RC_SIGN_IN = 123 // Request code para Google Sign-In
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +41,18 @@ class LoginActivity : AppCompatActivity() {
         val login = binding.login
         val register = binding.register
         val loading = binding.loading
+        val googleIcon = binding.googleLogin
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id)) // ID del cliente desde Firebase
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        binding.googleLogin?.setOnClickListener {
+            signInWithGoogle()
+        }
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
@@ -106,6 +123,26 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this@LoginActivity , RegisterActivity::class.java)
             this.startActivity(intent)
 
+        }
+    }
+
+    private fun signInWithGoogle() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account?.idToken?.let { idToken ->
+                    loginViewModel.firebaseAuthWithGoogle(idToken)
+                }
+            } catch (e: ApiException) {
+                Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -44,22 +44,18 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val mapsUtility = MapsUtility(requireContext(), lifecycleScope)
         val recyclerView = binding.rvPublications
         adapter = PublicationAdapter(mutableListOf(),
-                                    mapsUtility,
                                     onLikeDislikeClicked = { publication, isLike ->
-                                    handleLikes(publication, isLike) // Llamar al método handleLikes
+                                    handleLikes(publication, isLike)
                                     })
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        // Configurar el OnClickListener para los ítems
         adapter.setOnItemClickListener { publicationId ->
-            openPostDetail(publicationId) // Llamar a la función openPostDetail cuando se hace clic en un ítem
+            openPostDetail(publicationId)
         }
 
-        // Cargar publicaciones
         loadPublications()
 
         return root
@@ -75,12 +71,12 @@ class HomeFragment : Fragment() {
             if(isLike) {
                 commandPublicationRepository.likePublicationForId(publication.publicationId)
                 publication.likes += 1
-                Toast.makeText(requireContext(), "Has dejado un like", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), requireContext().getString(R.string.like_post), Toast.LENGTH_SHORT).show()
             }
             else {
                 commandPublicationRepository.dislikePublicationForId(publication.publicationId)
                 publication.dislikes += 1
-                Toast.makeText(requireContext(), "Has dejado un dislike", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), requireContext().getString(R.string.dislike_post), Toast.LENGTH_SHORT).show()
             }
             adapter.updatePublication(publication)
         }
@@ -90,10 +86,8 @@ class HomeFragment : Fragment() {
     private fun loadPublications () {
         lifecycleScope.launch {
             try {
-                // Obtener publicaciones desde el repositorio
                 val publications = queryPublicationRepository.getRecentPublications()
 
-                // Actualizar el adaptador con las publicaciones obtenidas
                 if (publications != null) {
                     adapter.updateData(publications)
                 }

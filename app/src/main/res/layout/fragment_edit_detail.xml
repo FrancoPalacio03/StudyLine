@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- NombreUsuario y Fecha -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/post_detail_usename"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="NombreUsuario"
+                android:textStyle="bold"
+                android:gravity="start"
+                android:padding="8dp" />
+
+            <TextView
+                android:id="@+id/post_detail_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fecha"
+                android:gravity="end"
+                android:padding="8dp" />
+        </LinearLayout>
+
+        <!-- Título con botón editar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/post_detail_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Título"
+                android:enabled="false"
+                android:padding="8dp"
+                android:textSize="30dp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/edit_title_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/icon_edit"
+                android:contentDescription="Editar Título" />
+        </LinearLayout>
+
+        <!-- Localización con botón editar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/post_detail_location"
+                android:layout_width="307dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:gravity="center"
+                android:hint="Localización"
+                android:padding="8dp"
+                android:textSize="20dp" />
+
+        </LinearLayout>
+
+        <!-- Materia con botón editar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/post_detail_subject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Materia"
+                android:enabled="false"
+                android:padding="8dp"
+                android:textSize="20dp"
+                android:gravity="center"/>
+
+            <Button
+                android:id="@+id/edit_subject_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/icon_edit"
+                android:contentDescription="Editar Materia" />
+        </LinearLayout>
+
+        <!-- Descripción con botón editar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/post_detail_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Descripción"
+                android:enabled="false"
+                android:padding="8dp"
+                android:textSize="20dp"/>
+
+            <Button
+                android:id="@+id/edit_description_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/icon_edit"
+                android:contentDescription="Editar Descripción" />
+        </LinearLayout>
+
+        <!-- Archivos -->
+        <TextView
+            android:id="@+id/files_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Archivos"
+            android:gravity="center"
+            android:paddingVertical="12dp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filesRecyclerView"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:id="@+id/postCountLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/num_likes"/>
+
+            <!-- Likes -->
+            <ImageView
+                android:id="@+id/likeImage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="Like"
+                android:src="@drawable/icon_like"
+                android:layout_marginStart="5dp"/>
+
+            <TextView
+                android:id="@+id/postCountDislike"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/num_dislikes"
+                android:gravity="center"/>
+
+            <!-- Dislikes -->
+            <ImageView
+                android:id="@+id/dislikeImage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="Like"
+                android:src="@drawable/icon_dislike"
+                android:layout_marginStart="5dp"/>
+
+            <TextView
+                android:id="@+id/postCountComment"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/num_dislikes"
+                android:gravity="center"/>
+
+            <ImageView
+                android:id="@+id/commentImage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="Like"
+                android:src="@drawable/icon_comment"
+                android:layout_marginStart="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

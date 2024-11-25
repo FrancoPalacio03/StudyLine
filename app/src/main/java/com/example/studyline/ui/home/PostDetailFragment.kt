@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,8 +28,10 @@ import com.example.studyline.data.model.Comment
 import com.example.studyline.data.model.Publication
 import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
+import com.example.studyline.data.repository.UserRepository
 import com.example.studyline.databinding.FragmentPostDetailBinding
 import com.example.studyline.ui.home.adapters.CommentsAdapter
+import com.example.studyline.utils.MapsUtility
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -45,7 +48,10 @@ class PostDetailFragment : Fragment() {
 
     private val commandPublication = CommandPublication()
     private val queryPublication = QueryPublication()
+    private val userRepository = UserRepository()
     private var publicationId: String? = null
+    private var userName : String? = null
+    private lateinit var mapsUtility : MapsUtility
     private val REQUEST_WRITE_STORAGE = 100
 
     private lateinit var commentsAdapter: CommentsAdapter
@@ -55,11 +61,13 @@ class PostDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPostDetailBinding.inflate(inflater, container, false)
+        mapsUtility = MapsUtility(requireContext(), lifecycleScope)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         // Configurar RecyclerView para comentarios
         commentsAdapter = CommentsAdapter()
@@ -94,6 +102,7 @@ class PostDetailFragment : Fragment() {
         try {
             val publication = queryPublication.getPublicationById(postId)
             if (publication != null) {
+                val userOwn = userRepository.getUserById(publication.userId)
                 val date: com.google.firebase.Timestamp = publication.date
                 val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val dateParse = formatter.format(date.toDate())
@@ -101,8 +110,15 @@ class PostDetailFragment : Fragment() {
                 binding.postDetailDate.text = dateParse
                 binding.postDetailSubject.text = publication.subjectId
                 binding.postDetailDescription.text = publication.description
-                binding.postCountLike.text = publication.likes.toString()
-                binding.postCountDislike.text = publication.dislikes.toString()
+                if (userOwn != null) {
+                    binding.postDetailUsename.text = userOwn.name
+                }
+                else{
+                    binding.postDetailUsename.text = requireContext().getString(R.string.user_anonimus_name)
+                }
+                mapsUtility.getAddressFromCoordinates(publication.latitude, publication.longitude) { address ->
+                    binding.postDetailLocation.text = address ?: requireContext().getString(R.string.address_not_available)
+                }
 
                 loadFiles(publication.files)
 
@@ -140,11 +156,11 @@ class PostDetailFragment : Fragment() {
                 binding.commentInput.text.clear()
                 binding.commentInput.clearFocus()
                 commentsAdapter.addComment(newComment)
-                showSnackbar("Comentario añadido.")
+                showSnackbar(requireContext().getString(R.string.add_comment_ok))
 
 
             } catch (e: Exception) {
-                showSnackbar("Error al añadir el comentario.")
+                showSnackbar(requireContext().getString(R.string.add_comment_bad))
             }
         }
     }
@@ -172,39 +188,43 @@ class PostDetailFragment : Fragment() {
 
     private fun loadFiles(files: List<String>) {
         val filesLayout = binding.filesLayout
-        files.forEach { fileUrl ->
-            val fileExtension = getFileExtension(fileUrl)
+        if (files.isEmpty()) {
+            binding.archivosLabel.text = "No hay archivos disponibles"
+            binding.descargarArchivos.visibility = View.GONE // Ocultar el botón si no hay archivos
+        } else {
+            files.forEach { fileUrl ->
+                val fileExtension = getFileExtension(fileUrl)
 
-            // Crear contenedor para el icono y el botón de descarga
-            val fileItemLayout = LinearLayout(requireContext()).apply {
-                orientation = LinearLayout.HORIZONTAL
-                setPadding(16, 16, 16, 16)
-            }
-
-            // Icono de vista previa
-            val fileIcon = ImageView(requireContext()).apply {
-                val iconResId = when {
-                    fileExtension in listOf("jpg", "jpeg", "png", "gif") -> R.drawable.ic_image
-                    fileExtension == "pdf" -> R.drawable.ic_pdf
-                    fileExtension in listOf("txt", "doc", "docx") -> R.drawable.ic_text_file
-                    else -> R.drawable.ic_generic_file
+                // Crear contenedor para el archivo y su ícono
+                val fileItemLayout = LinearLayout(requireContext()).apply {
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER
+                    setPadding(16, 16, 16, 16)
                 }
-                setImageResource(iconResId)
-                layoutParams = ViewGroup.LayoutParams(100, 100) // Tamaño pequeño
+
+                // Icono del archivo
+                val fileIcon = ImageView(requireContext()).apply {
+                    val iconResId = when {
+                        fileExtension in listOf("jpg", "jpeg", "png", "gif") -> R.drawable.ic_image
+                        fileExtension == "pdf" -> R.drawable.ic_pdf
+                        fileExtension in listOf("txt", "doc", "docx") -> R.drawable.ic_text_file
+                        else -> R.drawable.ic_generic_file
+                    }
+                    setImageResource(iconResId)
+                    layoutParams = ViewGroup.LayoutParams(100, 100) // Tamaño pequeño
+                }
+
+                // Añadir el ícono al layout principal
+                fileItemLayout.addView(fileIcon)
+
+                // Reutilizar el botón "Descargar"
+                binding.descargarArchivos.setOnClickListener {
+                    downloadFile(fileUrl) // Llamar al método para descargar el archivo
+                }
+
+                // Agregar el layout al contenedor de archivos
+                filesLayout.addView(fileItemLayout)
             }
-
-            // Botón de descarga
-            val downloadButton = Button(requireContext()).apply {
-                text = "Descargar"
-                setOnClickListener { downloadFile(fileUrl) }
-            }
-
-            // Añadir el icono y el botón al layout
-            fileItemLayout.addView(fileIcon)
-            fileItemLayout.addView(downloadButton)
-
-            // Agregar el layout a la vista principal
-            filesLayout.addView(fileItemLayout)
         }
     }
 

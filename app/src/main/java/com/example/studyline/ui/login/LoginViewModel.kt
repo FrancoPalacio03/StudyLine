@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import android.util.Patterns
 import com.example.studyline.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginViewModel : ViewModel() {
 
@@ -22,6 +23,19 @@ class LoginViewModel : ViewModel() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val displayName = auth.currentUser?.email ?: "User"
+                    _loginResult.value = LoginResult(success = LoggedInUserView(displayName = displayName))
+                } else {
+                    _loginResult.value = LoginResult(error = R.string.login_failed)
+                }
+            }
+    }
+
+    fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val displayName = auth.currentUser?.displayName ?: "User"
                     _loginResult.value = LoginResult(success = LoggedInUserView(displayName = displayName))
                 } else {
                     _loginResult.value = LoginResult(error = R.string.login_failed)

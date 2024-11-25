@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">StudyLine</string>
+    <string name="default_web_client_id">601079991247-0dpcbk73qcgbbha1dnev8tsn1e89lo68.apps.googleusercontent.com</string>
     <string name="navigation_drawer_open">Abrir el cajón de navegación</string>
     <string name="navigation_drawer_close">Cerrar el cajón de navegación</string>
     <string name="nav_header_title">Android Studio</string>
@@ -36,6 +37,8 @@
     <string name="upload_file">Subir archivo</string>
     <string name="no_file_selected">No se ha seleccionado ningún archivo</string>
     <string name="post_button">Publicar</string>
+    <string name="add_comment_ok">Has añadido un comentario</string>
+    <string name="add_comment_bad">No se pudo añadir el comentario</string>
     <!-- POST DETAILS -->
     <string name="post_title">Título de la publicación</string>
     <string name="post_date">Fecha</string>
@@ -45,6 +48,7 @@
     <string name="dislike_count">Num</string>
     <string name="comment_hint">Escribe un comentario...</string>
     <string name="add_comment">Agregar comentario</string>
+    <string name="user_anonimus_name">Anonimo</string>
     <!-- USUARIO -->
     <string name="select_language">Seleccionar idioma:</string>
     <string name="select_theme">Seleccionar tema:</string>
@@ -58,5 +62,21 @@
     <string name="post_description">Descripción</string>
     <string name="num_likes">Num</string>
     <string name="num_dislikes">Num</string>
+    <string name="address_not_available">Direccion no disponible</string>
+    <string name="like_post">¡Has dejado un "Me gusta" en la publicación!</string>
+    <string name="dislike_post">¡Has dejado un "No me gusta" en la publicación!</string>
+    <string name="edit_post_text">Editar Título</string>
+    <string name="edit_post_subject">Editar Materia</string>
+    <string name="edit_post_description">Editar Descripcion</string>
+    <string name="save_world">Guardar</string>
+    <string name="cancel_world">Cancelar</string>
+    <string name="accept_world">Aceptar</string>
+    <string name="yes_world">Si</string>
+    <string name="not_file_publication">No hay archivos en esta publicación</string>
+    <string name="edit_title_result">Se edito el titulo correctamente</string>
+    <string name="edit_subject_result">Se edito la materia correctamente</string>
+    <string name="edit_description_result">Se edito la descripcion correctamente</string>
+    <string name="delete_publication_title">Eliminar publicación</string>
+    <string name="delete_publication_question">¿Desea eliminar esta publicación?</string>
 
 </resources>

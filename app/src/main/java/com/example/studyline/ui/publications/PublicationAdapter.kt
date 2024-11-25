@@ -17,14 +17,12 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
     class PublicationAdapter(
-        private var publications: MutableList<Publication>, // Cambiar a MutableList,
-        private val mapsUtility: MapsUtility,
+        private var publications: MutableList<Publication>,
         private val onLikeDislikeClicked: (Publication, Boolean) -> Unit,) :
     RecyclerView.Adapter<PublicationAdapter.PublicationViewHolder>() {
 
-        private var itemClickListener: ((String) -> Unit)? = null // Definimos un listener privado
+        private var itemClickListener: ((String) -> Unit)? = null
 
-    // ViewHolder: Representa una tarjeta individual en la lista
     inner class PublicationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(publication: Publication) {
             itemView.findViewById<TextView>(R.id.postTitle).text = publication.title
@@ -36,9 +34,6 @@ import java.util.Locale
             itemView.findViewById<TextView>(R.id.postSubject).text = publication.subjectId
             itemView.findViewById<TextView>(R.id.postCountLike).text = publication.likes.toString()
             itemView.findViewById<TextView>(R.id.postCountDislike).text = publication.dislikes.toString()
-            mapsUtility.getAddressFromCoordinates(publication.latitude, publication.longitude) { address ->
-                itemView.findViewById<TextView>(R.id.location).text = address ?: "Ubicación no disponible"
-            }
 
             itemView.findViewById<ImageView>(R.id.btnLike).setOnClickListener{
                 onLikeDislikeClicked(publication, true)

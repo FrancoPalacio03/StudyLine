@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.studyline.R
 import com.example.studyline.data.model.Publication
 import com.example.studyline.data.repository.PublicationRepositories.CommandPublication
 import com.example.studyline.data.repository.PublicationRepositories.QueryPublication
 import com.example.studyline.databinding.FragmentOwnPostBinding
 import com.example.studyline.ui.publications.OwnPublicationAdapter
-import com.example.studyline.utils.MapsUtility
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -40,7 +41,7 @@ class OwnPost : Fragment() {
         val recyclerView = binding.rvOwnPublications
         adapter = OwnPublicationAdapter(
             mutableListOf(),
-            onEditClick = { publication -> Log.d("handleEdit", "no implemented yet")},
+            onEditClick = { publication -> handleEditPost(publication.publicationId) },
             onDeleteClick = { publication -> handleDelete(publication)})
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
@@ -53,14 +54,14 @@ class OwnPost : Fragment() {
 
     private fun handleDelete(publication: Publication) {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Eliminar Publicación")
-        builder.setMessage("¿Desea eliminar esta publicación?")
-        builder.setPositiveButton("Sí") { dialog, _ ->
+        builder.setTitle(requireContext().getString(R.string.delete_publication_title))
+        builder.setMessage(requireContext().getString(R.string.delete_publication_question))
+        builder.setPositiveButton(requireContext().getString(R.string.yes_world)) { dialog, _ ->
             lifecycleScope.launch{
                 commandPublicationRepository.deletePostById(publication.publicationId)
                 loadPublications()
             }
-            dialog.dismiss() // Cerrar el diálogo
+            dialog.dismiss()
         }
         builder.setNegativeButton("No") { dialog, _ ->
             dialog.dismiss()
@@ -79,10 +80,8 @@ class OwnPost : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
         lifecycleScope.launch {
             try {
-                // Obtener publicaciones desde el repositorio
                 val publications = queryPublicationRepository.getPublicationsByUser(userId)
 
-                // Actualizar el adaptador con las publicaciones obtenidas
                 if (publications != null) {
                     adapter.updateData(publications)
                 }
@@ -90,5 +89,12 @@ class OwnPost : Fragment() {
                 Log.e("MainActivity", "Error al cargar publicaciones", e)
             }
         }
+    }
+
+    private fun handleEditPost (publicationId: String){
+        val bundle = Bundle().apply {
+            putString("publicationId", publicationId)
+        }
+        findNavController().navigate(R.id.action_OwnPostFragment_to_EditDetailFragment, bundle)
     }
 }

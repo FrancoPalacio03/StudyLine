@@ -15,74 +15,55 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Encabezado: Título, Ubicación y Fecha -->
+        <!-- Título -->
+        <TextView
+            android:id="@+id/postTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:paddingBottom="8dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/post_title"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <!-- Materia y Fecha -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/postTitle"
+                android:id="@+id/postSubject"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:paddingBottom="4dp"
-                android:text="@string/post_title"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:background="?attr/selectableItemBackground"
+                android:fontFamily="sans-serif"
+                android:paddingVertical="4dp"
+                android:textSize="15sp"
+                android:text="@string/post_subject"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/postDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:padding="2dp"
-                    android:text="@string/location"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/postDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:padding="2dp"
-                    android:text="@string/post_date"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
+                android:fontFamily="sans-serif-light"
+                android:padding="4dp"
+                android:text="@string/post_date"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/postSubject"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:fontFamily="sans-serif"
-            android:paddingVertical="4dp"
-            android:text="@string/post_subject"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <!-- Descripción -->
         <TextView
             android:id="@+id/postDescription"
             android:layout_width="match_parent"
-            android:layout_height="78dp"
-            android:paddingVertical="8dp"
-            android:text="@string/post_description" />
-
-        <!-- Archivos subidos -->
-        <LinearLayout
-            android:id="@+id/filesLayout"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp"/>
+            android:paddingVertical="8dp"
+            android:textSize="15sp"
+            android:text="@string/post_description" />
 
         <!-- Interacciones: Comentarios, Likes, y Dislikes -->
         <LinearLayout
@@ -97,7 +78,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:text="@string/num_likes"
-                android:gravity="center"/>
+                android:gravity="center" />
 
             <!-- Likes -->
             <ImageView
@@ -113,7 +94,7 @@
                 android:layout_height="32dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/num_dislikes"
-                android:gravity="center"/>
+                android:gravity="center" />
 
             <!-- Dislikes -->
             <ImageView

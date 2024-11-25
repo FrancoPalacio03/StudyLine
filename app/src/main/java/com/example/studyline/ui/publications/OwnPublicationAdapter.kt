@@ -60,12 +60,4 @@ class OwnPublicationAdapter(
         notifyDataSetChanged()
     }
 
-    fun updatePublication(publication: Publication) {
-        val index = publications.indexOfFirst { it.publicationId == publication.publicationId }
-        if (index != -1) {
-            publications[index] = publication
-            notifyItemChanged(index)
-        }
-    }
-
 }
